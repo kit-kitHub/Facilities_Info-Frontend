@@ -85,6 +85,15 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
+fonts:
+  - family: KoddiUDOnGothic
+    fonts:
+      - asset: assets/fonts/KoddiUDOnGothic-Regular.ttf
+      - asset: assets/fonts/KoddiUDOnGothic-Bold.ttf
+        weight: 700
+      - asset: assets/fonts/KoddiUDOnGothic-ExtraBold.ttf
+        weight: 800
+
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
