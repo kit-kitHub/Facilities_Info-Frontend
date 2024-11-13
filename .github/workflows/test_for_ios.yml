@@ -1,0 +1,21 @@
+name: Test for iOS
+on:
+  push:
+    branches:
+      - development
+  pull_request:
+
+jobs:
+  unit-tests:
+    name: Unit Tests for iOS
+    runs-on: macos-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      - run: flutter test
+      - run: flutter build ios --release --no-codesign
