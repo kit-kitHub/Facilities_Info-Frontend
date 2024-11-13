@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
-import 'Search_1.dart';
-import 'Menu.dart';
 
 void main() {
   AuthRepository.initialize(appKey: 'fd3b1ea02a770944b136c4a2ffdf5262');
@@ -113,9 +111,6 @@ class _MainScreenState extends State<MainScreen> {
               ),
             ],
           ),
-          // Search Page
-          Search_1(),
-          ProfileScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
