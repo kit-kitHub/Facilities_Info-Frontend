@@ -32,11 +32,11 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build Android release APK
-        run: flutter build apk --release  # Android APK 빌드
+      - name: Build Android APK
+        run: flutter build apk  # Android APK 빌드
 
       - name: Build Android App Bundle
-        run: flutter build appbundle --release  # Android AAB 빌드
+        run: flutter build appbundle  # Android AAB 빌드
 
   ios-build:
     name: iOS Build
@@ -59,5 +59,5 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build iOS release
-        run: flutter build ios --release  # iOS 릴리스 빌드
+      - name: Build iOS
+        run: flutter build ios --release --no-codesign # iOS 릴리스 빌드
