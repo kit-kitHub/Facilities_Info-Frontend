@@ -13,25 +13,19 @@ on:
 jobs:
   android-build:
     name: Android Build
-    runs-on: ubuntu-latest  # Android 빌드에 적합한 환경
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK  build process.
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
       - name: Cache Flutter SDK
         uses: actions/cache@v3
         with:
-          path: "${{ runner.tool_cache }}/flutter"
-          key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          path: ${{ runner.tool_cache }}/flutter
+          key: "flutter-${{ runner.os }}-${{ hashFiles('**/pubspec.yaml') }}"
           restore-keys: |
-            "flutter-:os:-:channel:-:version:-:arch:-
+            flutter-${{ runner.os }}-
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -42,22 +36,22 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.pub-cache
-          key: "flutter-pub-:os:-:channel:-:version:-:arch:-:hash:"
+          key: "flutter-pub-${{ runner.os }}-${{ hashFiles('**/pubspec.yaml') }}"
           restore-keys: |
-            "flutter-pub-:os:-:channel:-:version:-:arch:-
+            flutter-pub-${{ runner.os }}-
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build Android APK
-        run: flutter build apk  # Android APK 빌드
+      - name: Build Android release APK
+        run: flutter build apk --release
 
       - name: Build Android App Bundle
-        run: flutter build appbundle  # Android AAB 빌드
+        run: flutter build appbundle --release
 
   ios-build:
     name: iOS Build
-    runs-on: macos-latest  # iOS 빌드에 필요한 macOS 환경
+    runs-on: macos-latest
 
     steps:
       - name: Checkout code
@@ -66,10 +60,10 @@ jobs:
       - name: Cache Flutter SDK
         uses: actions/cache@v3
         with:
-          path: "${{ runner.tool_cache }}/flutter"
-          key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          path: ${{ runner.tool_cache }}/flutter
+          key: "flutter-${{ runner.os }}-${{ hashFiles('**/pubspec.yaml') }}"
           restore-keys: |
-            "flutter-:os:-:channel:-:version:-:arch:-
+            flutter-${{ runner.os }}-
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -80,12 +74,12 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.pub-cache
-          key: "flutter-pub-:os:-:channel:-:version:-:arch:-:hash:"
+          key: "flutter-pub-${{ runner.os }}-${{ hashFiles('**/pubspec.yaml') }}"
           restore-keys: |
-            "flutter-pub-:os:-:channel:-:version:-:arch:-
+            flutter-pub-${{ runner.os }}-
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build iOS
-        run: flutter build ios --release --no-codesign # iOS 릴리스 빌드
+      - name: Build iOS release
+        run: flutter build ios --release --no-codesign
