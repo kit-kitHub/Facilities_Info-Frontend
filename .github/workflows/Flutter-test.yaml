@@ -1,0 +1,63 @@
+name: Flutter CI - Android & iOS Build
+
+on:
+  push:
+    branches:
+      - main
+      - development
+  pull_request:
+    branches:
+      - main
+      - development
+
+jobs:
+  android-build:
+    name: Android Build
+    runs-on: ubuntu-latest  # Android 빌드에 적합한 환경
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.24.4
+          cache: true
+          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
+          pub-cache-key: "flutter-pub:os:-:channel:-:version:-:arch:-:hash:"
+          pub-cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Android release APK
+        run: flutter build apk --release  # Android APK 빌드
+
+      - name: Build Android App Bundle
+        run: flutter build appbundle --release  # Android AAB 빌드
+
+  ios-build:
+    name: iOS Build
+    runs-on: macos-latest  # iOS 빌드에 필요한 macOS 환경
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.24.4
+          cache: true
+          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
+          pub-cache-key: "flutter-pub:os:-:channel:-:version:-:arch:-:hash:"
+          pub-cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build iOS release
+        run: flutter build ios --release  # iOS 릴리스 빌드
