@@ -30,10 +30,6 @@ jobs:
         with:
           flutter-version: 3.24.4
           cache: true
-          # cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
-          # cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
-          # pub-cache-key: "flutter-pub:os:-:channel:-:version:-:arch:-:hash:"
-          # pub-cache-path: "${{ runner.tool_cache }}/flutter/pub-cache/:channel:-:version:-:arch:"
 
       - name: Install dependencies
         run: flutter pub get
@@ -57,10 +53,6 @@ jobs:
         with:
           flutter-version: 3.24.4
           cache: true
-          # cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
-          # cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
-          # pub-cache-key: "flutter-pub:os:-:channel:-:version:-:arch:-:hash:"
-          # pub-cache-path: "${{ runner.tool_cache }}/flutter/pub-cache/:channel:-:version:-:arch:"
 
       - name: Install dependencies
         run: flutter pub get
