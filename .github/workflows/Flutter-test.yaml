@@ -13,21 +13,28 @@ on:
 jobs:
   android-build:
     name: Android Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Android 빌드에 적합한 환경
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
       - name: Cache Flutter SDK
         uses: actions/cache@v3
         with:
           path: ${{ runner.tool_cache }}/flutter
-          key: "flutter-${{ runner.os }}-${{ hashFiles('**/pubspec.yaml') }}"
+          key: "flutter-${{ runner.os }}-v${{ steps.set-up-flutter.outputs.flutter-version }}-${{ hashFiles('**/pubspec.yaml') }}"
           restore-keys: |
-            flutter-${{ runner.os }}-
+            flutter-${{ runner.os }}-v${{ steps.set-up-flutter.outputs.flutter-version }}-
 
       - name: Set up Flutter
+        id: set-up-flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: 3.24.4
@@ -36,22 +43,22 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.pub-cache
-          key: "flutter-pub-${{ runner.os }}-${{ hashFiles('**/pubspec.yaml') }}"
+          key: "flutter-pub-${{ runner.os }}-v${{ steps.set-up-flutter.outputs.flutter-version }}-${{ hashFiles('**/pubspec.yaml') }}"
           restore-keys: |
-            flutter-pub-${{ runner.os }}-
+            flutter-pub-${{ runner.os }}-v${{ steps.set-up-flutter.outputs.flutter-version }}-
 
       - name: Install dependencies
         run: flutter pub get
 
       - name: Build Android release APK
-        run: flutter build apk --release
+        run: flutter build apk --release  # Android APK 빌드
 
       - name: Build Android App Bundle
-        run: flutter build appbundle --release
+        run: flutter build appbundle --release  # Android AAB 빌드
 
   ios-build:
     name: iOS Build
-    runs-on: macos-latest
+    runs-on: macos-latest  # iOS 빌드에 필요한 macOS 환경
 
     steps:
       - name: Checkout code
@@ -61,11 +68,12 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ runner.tool_cache }}/flutter
-          key: "flutter-${{ runner.os }}-${{ hashFiles('**/pubspec.yaml') }}"
+          key: "flutter-${{ runner.os }}-v${{ steps.set-up-flutter.outputs.flutter-version }}-${{ hashFiles('**/pubspec.yaml') }}"
           restore-keys: |
-            flutter-${{ runner.os }}-
+            flutter-${{ runner.os }}-v${{ steps.set-up-flutter.outputs.flutter-version }}-
 
       - name: Set up Flutter
+        id: set-up-flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: 3.24.4
@@ -74,12 +82,12 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.pub-cache
-          key: "flutter-pub-${{ runner.os }}-${{ hashFiles('**/pubspec.yaml') }}"
+          key: "flutter-pub-${{ runner.os }}-v${{ steps.set-up-flutter.outputs.flutter-version }}-${{ hashFiles('**/pubspec.yaml') }}"
           restore-keys: |
-            flutter-pub-${{ runner.os }}-
+            flutter-pub-${{ runner.os }}-v${{ steps.set-up-flutter.outputs.flutter-version }}-
 
       - name: Install dependencies
         run: flutter pub get
 
       - name: Build iOS release
-        run: flutter build ios --release --no-codesign
+        run: flutter build ios --release --no-codesign  # iOS 빌드
