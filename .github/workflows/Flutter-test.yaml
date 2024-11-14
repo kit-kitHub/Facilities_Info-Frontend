@@ -25,27 +25,15 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Cache Flutter SDK
-        uses: actions/cache@v3
-        with:
-          path: ${{ runner.tool_cache }}/flutter
-          key: "flutter-${{ runner.os }}-v${{ steps.set-up-flutter.outputs.flutter-version }}-${{ hashFiles('**/pubspec.yaml') }}"
-          restore-keys: |
-            flutter-${{ runner.os }}-v${{ steps.set-up-flutter.outputs.flutter-version }}-
-
       - name: Set up Flutter
-        id: set-up-flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: 3.24.4
-
-      - name: Cache pub dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.pub-cache
-          key: "flutter-pub-${{ runner.os }}-v${{ steps.set-up-flutter.outputs.flutter-version }}-${{ hashFiles('**/pubspec.yaml') }}"
-          restore-keys: |
-            flutter-pub-${{ runner.os }}-v${{ steps.set-up-flutter.outputs.flutter-version }}-
+          cache: true
+          # cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          # cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
+          # pub-cache-key: "flutter-pub:os:-:channel:-:version:-:arch:-:hash:"
+          # pub-cache-path: "${{ runner.tool_cache }}/flutter/pub-cache/:channel:-:version:-:arch:"
 
       - name: Install dependencies
         run: flutter pub get
@@ -64,27 +52,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Cache Flutter SDK
-        uses: actions/cache@v3
-        with:
-          path: ${{ runner.tool_cache }}/flutter
-          key: "flutter-${{ runner.os }}-v${{ steps.set-up-flutter.outputs.flutter-version }}-${{ hashFiles('**/pubspec.yaml') }}"
-          restore-keys: |
-            flutter-${{ runner.os }}-v${{ steps.set-up-flutter.outputs.flutter-version }}-
-
       - name: Set up Flutter
-        id: set-up-flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: 3.24.4
-
-      - name: Cache pub dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.pub-cache
-          key: "flutter-pub-${{ runner.os }}-v${{ steps.set-up-flutter.outputs.flutter-version }}-${{ hashFiles('**/pubspec.yaml') }}"
-          restore-keys: |
-            flutter-pub-${{ runner.os }}-v${{ steps.set-up-flutter.outputs.flutter-version }}-
+          cache: true
+          # cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          # cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
+          # pub-cache-key: "flutter-pub:os:-:channel:-:version:-:arch:-:hash:"
+          # pub-cache-path: "${{ runner.tool_cache }}/flutter/pub-cache/:channel:-:version:-:arch:"
 
       - name: Install dependencies
         run: flutter pub get
