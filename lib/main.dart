@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:kakao_map_plugin/kakao_map_plugin.dart';
+
 import 'src/map.dart';
 import 'src/search.dart';
 import 'src/menu.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: 'assets/env/.env');
+  AuthRepository.initialize(
+    appKey: dotenv.env['KAKAO_APP_KEY'] ?? '',
+  );
+
   runApp(const MyApp());
 }
 
