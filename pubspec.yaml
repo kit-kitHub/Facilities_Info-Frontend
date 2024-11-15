@@ -37,6 +37,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -61,6 +62,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/env/.env
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
@@ -71,14 +74,14 @@ flutter:
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/to/asset-from-package
 
-fonts:
-  - family: KoddiUDOnGothic
-    fonts:
-      - asset: assets/fonts/KoddiUDOnGothic-Regular.ttf
-      - asset: assets/fonts/KoddiUDOnGothic-Bold.ttf
-        weight: 700
-      - asset: assets/fonts/KodiUDOnGothic-ExtraBold.ttf
-        weight: 800
+  fonts:
+    - family: KoddiUDOnGothic
+      fonts:
+        - asset: assets/fonts/KoddiUDOnGothic-Regular.ttf
+        - asset: assets/fonts/KoddiUDOnGothic-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/KoddiUDOnGothic-ExtraBold.ttf
+          weight: 800
 
   #
   # For details regarding fonts from package dependencies,
