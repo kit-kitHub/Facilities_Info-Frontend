@@ -19,9 +19,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create .env file
+      - name: Create env Directory
         run:
           mkdir -p assets/env
+          
+      - name: Create .env file
+        run:
           echo "KAKAO_APP_KEY=${{ secrets.KAKAO_APP_KEY }}" > assets/env/.env
 
       - name: Set up JDK 17
@@ -53,9 +56,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create .env file
+      - name: Create env Directory
         run:
           mkdir -p assets/env
+          
+      - name: Create .env file
+        run:
           echo "KAKAO_APP_KEY=${{ secrets.KAKAO_APP_KEY }}" > assets/env/.env
 
       - name: Set up Flutter
