@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'src/map.dart';
 import 'src/search.dart';
 import 'src/menu.dart';
 
 void main() {
-  AuthRepository.initialize(appKey: 'fd3b1ea02a770944b136c4a2ffdf5262');
   runApp(const MyApp());
 }
 

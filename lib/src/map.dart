@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 
+void Init() {
+  AuthRepository.initialize(appKey: 'fd3b1ea02a770944b136c4a2ffdf5262');
+}
+
+
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
+  Widget Init() {
+    throw UnimplementedError();
+  }
 
   @override
   State<MapScreen> createState() => _MainScreenState();
