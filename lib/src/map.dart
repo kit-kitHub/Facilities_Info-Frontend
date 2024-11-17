@@ -73,9 +73,6 @@ class _MainScreenState extends State<MapScreen> {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             child: KakaoMap(
-              onMapTap: ((controller) async {
-                mapController.clear();
-              }),
               onMapCreated: (controller) async {
                 mapController = controller;
                 LatLng initialPosition = LatLng(37.3608681, 126.9306506);
@@ -95,7 +92,6 @@ class _MainScreenState extends State<MapScreen> {
               children: [
                 FloatingActionButton(
                   onPressed: () async {
-                    // Zoom in
                   },
                   child: Icon(Icons.add),
                 ),
