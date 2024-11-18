@@ -1,13 +1,55 @@
 import 'package:flutter/material.dart';
 import 'Info.dart';
 
-class MenuScreen extends StatelessWidget {
+class MenuScreen extends StatefulWidget {
   const MenuScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MenuScreen> createState() => _MenuScreen();
+}
+
+class _MenuScreen extends State<MenuScreen> {
+  // const MenuScreen({Key? key}) : super(key: key);
+  int _fontSize = 16;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text('메뉴'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.text_decrease),
+            onPressed: () {
+              setState(() {
+                if (_fontSize > 10) {
+                  _fontSize -= 1;
+                }
+              });
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Center(
+              child: Text(
+                _fontSize.toStringAsFixed(0),
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.text_increase),
+            onPressed: () {
+              setState(() {
+                if (_fontSize < 30) {
+                  _fontSize += 1;
+                }
+              });
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -117,3 +159,4 @@ class MenuScreen extends StatelessWidget {
     );
   }
 }
+
