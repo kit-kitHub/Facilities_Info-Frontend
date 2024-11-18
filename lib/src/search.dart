@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 
-class SearchScreen extends StatelessWidget {
+import '/SingleTone/font.dart';
+
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
+
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: HomeScreen(),
-    );
-  }
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class HomeScreen extends StatefulWidget {
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderStateMixin {
+  final fontSizeManager = FontSizeManager();
   late TabController _tabController;
   List<Map<String, dynamic>> menuItems = [];
   List<Map<String, dynamic>> filteredItems = [];
