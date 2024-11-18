@@ -1,9 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:kakao_map_plugin/kakao_map_plugin.dart';
+
 import 'src/map.dart';
 import 'src/search.dart';
 import 'src/menu.dart';
 
-void main() {
+import 'SingleTone/font.dart';
+
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: 'assets/env/.env');
+  AuthRepository.initialize(
+    appKey: dotenv.env['KAKAO_APP_KEY'] ?? '',
+  );
+
+  // FontSizeManager 초기화
+  await FontSizeManager().initialize();
+
   runApp(const MyApp());
 }
 
@@ -13,12 +29,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: const HomeScreen(),
-        theme: ThemeData(
-          fontFamily: 'KoddiiUDOnGothic',
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
-          useMaterial3: true,
-        )
+      home: const HomeScreen(),
+      theme: ThemeData(
+        fontFamily: 'KoddiUDOnGothic',
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
+        useMaterial3: true,
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(fontFamily: 'KoddiUDOnGothic'),
+          bodyMedium: TextStyle(fontFamily: 'KoddiUDOnGothic'),
+          bodySmall: TextStyle(fontFamily: 'KoddiUDOnGothic'),
+        ),
+        primaryTextTheme: const TextTheme(
+          headlineLarge: TextStyle(fontFamily: 'KoddiUDOnGothic'),
+          headlineMedium: TextStyle(fontFamily: 'KoddiUDOnGothic'),
+          headlineSmall: TextStyle(fontFamily: 'KoddiUDOnGothic'),
+        ),
+      ),
     );
   }
 }
@@ -34,8 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    const MapScreen(),
-    SearchScreen(),
+    const MapScreen() ,
+    const SearchScreen(),
     const MenuScreen(),
   ];
 
