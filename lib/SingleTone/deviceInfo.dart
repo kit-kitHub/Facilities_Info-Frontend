@@ -25,15 +25,15 @@ class DeviceInfo {
       // Android 디바이스 정보 가져오기
       final androidInfo = await deviceInfo.androidInfo;
       _osName = 'Android';
-      _osVersion = androidInfo.version.release ?? 'Unknown';
-      _deviceModel = androidInfo.model ?? 'Unknown';
-      _manufacturer = androidInfo.manufacturer ?? 'Unknown';
+      _osVersion = androidInfo.version.release;
+      _deviceModel = androidInfo.model;
+      _manufacturer = androidInfo.manufacturer;
     } else if (Platform.isIOS) {
       // iOS 디바이스 정보 가져오기
       final iosInfo = await deviceInfo.iosInfo;
       _osName = 'iOS';
-      _osVersion = iosInfo.systemVersion ?? 'Unknown';
-      _deviceModel = iosInfo.utsname.machine ?? 'Unknown';
+      _osVersion = iosInfo.systemVersion;
+      _deviceModel = iosInfo.utsname.machine;
       _manufacturer = 'Apple';
     } else {
       // 기타 OS 처리
