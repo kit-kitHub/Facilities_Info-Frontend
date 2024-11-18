@@ -40,6 +40,9 @@ dependencies:
   # 디바이스 정보를 얻어오기 위한 패키지
   device_info_plus: ^10.0.0
 
+  # 앱 버전을 얻어오기 위한 패키지
+  package_info_plus: ^4.0.0
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
