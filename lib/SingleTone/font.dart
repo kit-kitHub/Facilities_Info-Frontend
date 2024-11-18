@@ -33,4 +33,12 @@ class FontSizeManager {
     _fontSize = value;
     _prefs?.setDouble('fontSize', value);
   }
+
+  void decreaseFontSize() {
+    if (fontSize > 10) { fontSize -= 2; }
+  }
+
+  void increaseFontSize() {
+    if (fontSize < 40) { fontSize += 2; }
+  }
 }
