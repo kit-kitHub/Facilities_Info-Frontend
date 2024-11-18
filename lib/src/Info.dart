@@ -39,7 +39,7 @@ class _InfoScreen extends State<InfoScreen> {
         title: Text(
           '정보',
           style: TextStyle(
-          fontSize: fontSizeManager.fontSize + 4,
+          fontSize: fontSizeManager.fontSize + 4, // default : 20
           fontWeight: FontWeight.w500,
           ),
         ),
@@ -83,14 +83,14 @@ class _InfoScreen extends State<InfoScreen> {
           title: Text(
             title,
             style: TextStyle(
-              fontSize: fontSizeManager.fontSize + 1,
+              fontSize: fontSizeManager.fontSize + 1, // default : 17
               fontWeight: FontWeight.bold,
             ),
           ),
           subtitle: Text(
             subtitle,
             style: TextStyle(
-              fontSize: fontSizeManager.fontSize,
+              fontSize: fontSizeManager.fontSize, // default : 16
               color: Colors.black54,
             ),
           ),
