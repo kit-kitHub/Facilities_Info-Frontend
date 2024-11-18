@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'Info.dart';
 
+import '/SingleTone/font.dart';
+
+
 class MenuScreen extends StatefulWidget {
   const MenuScreen({Key? key}) : super(key: key);
 
@@ -9,62 +12,56 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreen extends State<MenuScreen> {
-  // const MenuScreen({Key? key}) : super(key: key);
-  int _fontSize = 16;
+  final fontSizeManager = FontSizeManager();  // FontSizeManager 로드
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+
+      // AppBar
       appBar: AppBar(
         title: Text('메뉴'),
         actions: [
           IconButton(
             icon: Icon(Icons.text_decrease),
-            onPressed: () {
-              setState(() {
-                if (_fontSize > 10) {
-                  _fontSize -= 1;
-                }
-              });
-            },
+            onPressed: () { setState(() { fontSizeManager.decreaseFontSize(); }); },
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Center(
               child: Text(
-                _fontSize.toStringAsFixed(0),
-                style: TextStyle(fontSize: 16),
+                fontSizeManager.fontSize.toStringAsFixed(0),
+                style: TextStyle(fontSize: fontSizeManager.fontSize),
               ),
             ),
           ),
           IconButton(
             icon: Icon(Icons.text_increase),
-            onPressed: () {
-              setState(() {
-                if (_fontSize < 30) {
-                  _fontSize += 1;
-                }
-              });
-            },
+            onPressed: () { setState(() { fontSizeManager.increaseFontSize(); }); },
           ),
         ],
       ),
+
+
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             children: [
               const SizedBox(height: 40),
+
               // MY Text
-              const Text(
+              Text(
                 'MY',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: fontSizeManager.fontSize + 8, // default : 24
                   fontWeight: FontWeight.bold,
                 ),
               ),
+
               const SizedBox(height: 20),
+
               // Profile Icon
               Container(
                 width: 100,
@@ -90,10 +87,10 @@ class _MenuScreen extends State<MenuScreen> {
               ),
               const SizedBox(height: 20),
               // Nickname
-              const Text(
+              Text(
                 '닉네임',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: fontSizeManager.fontSize + 2, // default : 18
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -108,11 +105,11 @@ class _MenuScreen extends State<MenuScreen> {
                   side: BorderSide(color: Colors.grey.shade300),
                   padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 ),
-                child: const Text(
+                child: Text(
                   '로그인하기',
                   style: TextStyle(
                     color: Colors.black,
-                    fontSize: 16,
+                    fontSize: fontSizeManager.fontSize,
                   ),
                 ),
               ),
