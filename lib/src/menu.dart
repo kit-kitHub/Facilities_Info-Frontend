@@ -1,28 +1,67 @@
 import 'package:flutter/material.dart';
 import 'Info.dart';
 
-class MenuScreen extends StatelessWidget {
+import '/SingleTone/font.dart';
+
+
+class MenuScreen extends StatefulWidget {
   const MenuScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MenuScreen> createState() => _MenuScreen();
+}
+
+class _MenuScreen extends State<MenuScreen> {
+  final fontSizeManager = FontSizeManager();  // FontSizeManager 로드
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+
+      // AppBar
+      appBar: AppBar(
+        title: Text('메뉴'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.text_decrease),
+            onPressed: () { setState(() { fontSizeManager.decreaseFontSize(); }); },
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Center(
+              child: Text(
+                fontSizeManager.fontSize.toStringAsFixed(0),
+                style: TextStyle(fontSize: fontSizeManager.fontSize),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.text_increase),
+            onPressed: () { setState(() { fontSizeManager.increaseFontSize(); }); },
+          ),
+        ],
+      ),
+
+
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             children: [
               const SizedBox(height: 40),
+
               // MY Text
-              const Text(
+              Text(
                 'MY',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: fontSizeManager.fontSize + 8, // default : 24
                   fontWeight: FontWeight.bold,
                 ),
               ),
+
               const SizedBox(height: 20),
+
               // Profile Icon
               Container(
                 width: 100,
@@ -48,10 +87,10 @@ class MenuScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               // Nickname
-              const Text(
+              Text(
                 '닉네임',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: fontSizeManager.fontSize + 2, // default : 18
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -66,11 +105,11 @@ class MenuScreen extends StatelessWidget {
                   side: BorderSide(color: Colors.grey.shade300),
                   padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 ),
-                child: const Text(
+                child: Text(
                   '로그인하기',
                   style: TextStyle(
                     color: Colors.black,
-                    fontSize: 16,
+                    fontSize: fontSizeManager.fontSize,
                   ),
                 ),
               ),
@@ -117,3 +156,4 @@ class MenuScreen extends StatelessWidget {
     );
   }
 }
+

@@ -6,6 +6,9 @@ import 'src/map.dart';
 import 'src/search.dart';
 import 'src/menu.dart';
 
+import 'SingleTone/font.dart';
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -13,6 +16,9 @@ void main() async {
   AuthRepository.initialize(
     appKey: dotenv.env['KAKAO_APP_KEY'] ?? '',
   );
+
+  // FontSizeManager 초기화
+  await FontSizeManager().initialize();
 
   runApp(const MyApp());
 }
