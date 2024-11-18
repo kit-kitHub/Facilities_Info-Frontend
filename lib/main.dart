@@ -23,12 +23,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: const HomeScreen(),
-        theme: ThemeData(
-          fontFamily: 'KoddiiUDOnGothic',
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
-          useMaterial3: true,
-        )
+      home: const HomeScreen(),
+      theme: ThemeData(
+        fontFamily: 'KoddiUDOnGothic',
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
+        useMaterial3: true,
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(fontFamily: 'KoddiUDOnGothic'),
+          bodyMedium: TextStyle(fontFamily: 'KoddiUDOnGothic'),
+          bodySmall: TextStyle(fontFamily: 'KoddiUDOnGothic'),
+        ),
+        primaryTextTheme: const TextTheme(
+          headlineLarge: TextStyle(fontFamily: 'KoddiUDOnGothic'),
+          headlineMedium: TextStyle(fontFamily: 'KoddiUDOnGothic'),
+          headlineSmall: TextStyle(fontFamily: 'KoddiUDOnGothic'),
+        ),
+      ),
     );
   }
 }
@@ -44,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    const MapScreen(),
+    const MapScreen() ,
     SearchScreen(),
     const MenuScreen(),
   ];
