@@ -1,7 +1,19 @@
 import 'package:flutter/material.dart';
 
-class InfoScreen extends StatelessWidget {
+import '/SingleTone/font.dart';
+import '/SingleTone/deviceInfo.dart';
+
+
+class InfoScreen extends StatefulWidget {
   const InfoScreen({Key? key}) : super(key: key);
+
+  @override
+  State<InfoScreen> createState() => _InfoScreen();
+}
+
+class _InfoScreen extends State<InfoScreen> {
+  final fontSizeManager = FontSizeManager();  // FontSizeManager 로드
+  final deviceInfo = DeviceInfo();            // DeviceInfo 로드
 
   @override
   Widget build(BuildContext context) {
@@ -29,14 +41,14 @@ class InfoScreen extends StatelessWidget {
           ),
           _buildInfoItem(
             title: 'OS',
-            subtitle: 'OS 정보',
+            subtitle: '${deviceInfo.osName} ${deviceInfo.osVersion}',
             onTap: () {
               // Handle OS info tap
             },
           ),
           _buildInfoItem(
             title: '부가 정보',
-            subtitle: '부가 정보',
+            subtitle: '${deviceInfo.manufacturer} ${deviceInfo.deviceModel}',
             onTap: () {
               // Handle additional info tap
             },

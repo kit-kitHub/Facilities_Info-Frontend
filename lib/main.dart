@@ -7,6 +7,7 @@ import 'src/search.dart';
 import 'src/menu.dart';
 
 import 'SingleTone/font.dart';
+import 'SingleTone/deviceInfo.dart';
 
 
 void main() async {
@@ -19,6 +20,9 @@ void main() async {
 
   // FontSizeManager 초기화
   await FontSizeManager().initialize();
+
+  // DeviceInfo 초기화
+  await DeviceInfo().initialize();
 
   runApp(const MyApp());
 }
