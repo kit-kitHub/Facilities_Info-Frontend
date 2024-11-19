@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'menuSubPage/Info.dart';
 
-import '/SingleTone/font.dart';
+import '/SingleTone/fontSizeManager.dart';
 
 
 class MenuScreen extends StatefulWidget {

@@ -4,7 +4,7 @@ import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 
 import 'src/home.dart';
 
-import 'SingleTone/font.dart';
+import 'SingleTone/fontSizeManager.dart';
 import 'SingleTone/deviceInfo.dart';
 
 import 'theme/theme.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '/SingleTone/font.dart';
+import '/SingleTone/fontSizeManager.dart';
 import '/SingleTone/deviceInfo.dart';
 
 
