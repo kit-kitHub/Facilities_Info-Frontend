@@ -7,6 +7,7 @@ import 'src/home.dart';
 import 'SingleTone/font.dart';
 import 'SingleTone/deviceInfo.dart';
 
+import 'theme/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,21 +33,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: const HomeScreen(),
-      theme: ThemeData(
-        fontFamily: 'KoddiUDOnGothic',
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
-        useMaterial3: true,
-        textTheme: const TextTheme(
-          bodyLarge: TextStyle(fontFamily: 'KoddiUDOnGothic'),
-          bodyMedium: TextStyle(fontFamily: 'KoddiUDOnGothic'),
-          bodySmall: TextStyle(fontFamily: 'KoddiUDOnGothic'),
-        ),
-        primaryTextTheme: const TextTheme(
-          headlineLarge: TextStyle(fontFamily: 'KoddiUDOnGothic'),
-          headlineMedium: TextStyle(fontFamily: 'KoddiUDOnGothic'),
-          headlineSmall: TextStyle(fontFamily: 'KoddiUDOnGothic'),
-        ),
-      ),
+      theme: AppTheme.lightTheme,
+      // darkTheme: AppTheme.darkTheme,
+      // themeMode: ThemeMode.system,
     );
   }
 }
