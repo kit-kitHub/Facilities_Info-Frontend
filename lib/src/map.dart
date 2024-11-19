@@ -35,7 +35,7 @@ class _MainScreenState extends State<MapScreen> {
     positionStream = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
-        distanceFilter: 1, // 최소 이동 거리 (5미터)
+        distanceFilter: 1, // 최소 이동 거리 (1미터)
       ),
     ).listen((Position position) {
       LatLng currentPosition = LatLng(position.latitude, position.longitude);
