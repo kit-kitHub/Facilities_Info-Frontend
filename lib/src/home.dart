@@ -36,18 +36,9 @@ class _HomeScreen extends State<HomeScreen> {
           });
         },
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: '지도',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: '검색',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.menu),
-            label: '메뉴',
-          ),
+          BottomNavigationBarItem(label: '지도', icon: Icon(Icons.map),),
+          BottomNavigationBarItem(label: '검색', icon: Icon(Icons.search),),
+          BottomNavigationBarItem(label: '메뉴', icon: Icon(Icons.menu),),
         ],
       ),
     );
