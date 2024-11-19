@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 
-class SearchScreen extends StatelessWidget {
+import '/SingleTone/font.dart';
+
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
+
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: HomeScreen(),
-    );
-  }
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class HomeScreen extends StatefulWidget {
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderStateMixin {
+  final fontSizeManager = FontSizeManager();
   late TabController _tabController;
   List<Map<String, dynamic>> menuItems = [];
   List<Map<String, dynamic>> filteredItems = [];
@@ -81,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             child: TextField(
               decoration: InputDecoration(
                 hintText: '검색 내용 작성칸',
+                hintStyle: TextStyle(fontSize: fontSizeManager.fontSize - 4),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(vertical: 8.0),
               ),
@@ -99,13 +96,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         bottom: TabBar(
           controller: _tabController,
           labelColor: Colors.blue,
-          labelStyle: const TextStyle(
-            fontSize: 12,
+          labelStyle: TextStyle(
+            fontSize: fontSizeManager.fontSize - 4,
             fontWeight: FontWeight.bold,
           ),
           unselectedLabelColor: Colors.black,
-          unselectedLabelStyle: const TextStyle(
-            fontSize: 12,
+          unselectedLabelStyle: TextStyle(
+            fontSize: fontSizeManager.fontSize - 4,
           ),
           indicatorColor: Colors.blue,
           tabs: [
@@ -122,7 +119,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           return MenuButton(
             icon: item['icon'],
             text: item['text'],
-            onPressurl: item['url'], // Placeholder URL
+            onPressurl: item['url'],
+            fontSizeManager: fontSizeManager,// Placeholder URL
           );
         }).toList(),
       ),
@@ -134,8 +132,8 @@ class MenuButton extends StatelessWidget {
   final IconData icon;
   final String text;
   final String onPressurl;
-
-  const MenuButton({Key? key, required this.icon, required this.text, required this.onPressurl}) : super(key: key);
+  final fontSizeManager;
+  const MenuButton({Key? key, required this.icon, required this.text, required this.onPressurl, required this.fontSizeManager}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +147,7 @@ class MenuButton extends StatelessWidget {
           children: [
             Icon(icon, size: 20, color: Colors.black54),
             SizedBox(width: 12),
-            Text(text, style: TextStyle(color: Colors.black87, fontSize: 14)),
+            Text(text, style: TextStyle(color: Colors.black87, fontSize: fontSizeManager.fontSize - 4)),
           ],
         ),
       ),
@@ -168,7 +166,7 @@ class _RecentSearchScreenState extends State<RecentSearchScreen> {
     {'name': '양포동 행정복지센터', 'url': 'https://yangpocity.kr'},
     {'name': '거의동 병원', 'url': 'https://geoidonghospital.kr'},
   ];
-
+  final fontSizeManager = FontSizeManager();
   final TextEditingController _textEditingController = TextEditingController();
 
   @override
@@ -193,7 +191,7 @@ class _RecentSearchScreenState extends State<RecentSearchScreen> {
           },
           decoration: InputDecoration(
             hintText: '검색 내용 작성칸',
-            hintStyle: TextStyle(color: Colors.grey),
+            hintStyle: TextStyle(color: Colors.grey, fontSize: fontSizeManager.fontSize - 4),
             border: InputBorder.none,
           ),
         ),
@@ -211,7 +209,7 @@ class _RecentSearchScreenState extends State<RecentSearchScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('최근검색', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text('최근검색', style: TextStyle(fontSize: fontSizeManager.fontSize + 2, fontWeight: FontWeight.bold)),
             Divider(),
             Expanded(
               child: ListView.builder(
@@ -229,7 +227,7 @@ class _RecentSearchScreenState extends State<RecentSearchScreen> {
                             children: [
                               Icon(Icons.search),
                               SizedBox(width: 16),
-                              Text(recentSearches[index]['name']!, style: TextStyle(color: Colors.black87, fontSize: 14)),
+                              Text(recentSearches[index]['name']!, style: TextStyle(color: Colors.black87, fontSize: fontSizeManager.fontSize - 2)),
                             ],
                           ),
                         ),
