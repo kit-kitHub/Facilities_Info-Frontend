@@ -20,6 +20,12 @@ class _HomeScreen extends State<HomeScreen> {
     const MenuScreen(),
   ];
 
+  final List<BottomNavigationBarItem> _bottomNavigationBarItems = [
+    const BottomNavigationBarItem(label: '지도', icon: Icon(Icons.map),),
+    const BottomNavigationBarItem(label: '검색', icon: Icon(Icons.search),),
+    const BottomNavigationBarItem(label: '메뉴', icon: Icon(Icons.menu),),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,11 +41,7 @@ class _HomeScreen extends State<HomeScreen> {
             _currentIndex = index;
           });
         },
-        items: const [
-          BottomNavigationBarItem(label: '지도', icon: Icon(Icons.map),),
-          BottomNavigationBarItem(label: '검색', icon: Icon(Icons.search),),
-          BottomNavigationBarItem(label: '메뉴', icon: Icon(Icons.menu),),
-        ],
+        items: _bottomNavigationBarItems,
       ),
     );
   }
