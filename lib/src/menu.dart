@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+
+import '/SingleTone/authService.dart';
+import '/SingleTone/fontSizeManager.dart';
+
 import 'menuSubPage/Info.dart';
 
-import '/SingleTone/fontSizeManager.dart';
+import '/src/accountManagePage/account_widget.dart';
+import '/src/accountManagePage/memberLogin.dart';
+
 
 
 class MenuScreen extends StatefulWidget {
@@ -13,6 +19,7 @@ class MenuScreen extends StatefulWidget {
 
 class _MenuScreen extends State<MenuScreen> {
   final fontSizeManager = FontSizeManager();  // FontSizeManager 로드
+  final authService = AuthService();          // AuthService 로드
 
   @override
   Widget build(BuildContext context) {
@@ -49,70 +56,10 @@ class _MenuScreen extends State<MenuScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             children: [
-              const SizedBox(height: 40),
+              // const SizedBox(height: 20),
 
-              // MY Text
-              Text(
-                'MY',
-                style: TextStyle(
-                  fontSize: fontSizeManager.fontSize + 8, // default : 24
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              AccountWidget(),
 
-              const SizedBox(height: 20),
-
-              // Profile Icon
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey.shade300),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 1,
-                      blurRadius: 5,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  Icons.person_outline,
-                  size: 50,
-                  color: Colors.grey.shade600,
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Nickname
-              Text(
-                '닉네임',
-                style: TextStyle(
-                  fontSize: fontSizeManager.fontSize + 2, // default : 18
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Login Button
-              OutlinedButton(
-                onPressed: () {},
-                style: OutlinedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  side: BorderSide(color: Colors.grey.shade300),
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                ),
-                child: Text(
-                  '로그인하기',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: fontSizeManager.fontSize,
-                  ),
-                ),
-              ),
               const SizedBox(height: 40),
               // Menu Items
               _buildMenuItem(Icons.notifications_none_outlined, '공지사항',
@@ -147,9 +94,9 @@ class _MenuScreen extends State<MenuScreen> {
         },
         child: Row(
           children: [
-            Icon(icon, size: 20, color: Colors.black54),
+            Icon(icon, size: fontSizeManager.fontSize + 6, color: Colors.black54),
             SizedBox(width: 12),
-            Text(title, style: TextStyle(color: Colors.black87, fontSize: 14)),
+            Text(title, style: TextStyle(color: Colors.black87, fontSize: fontSizeManager.fontSize)),
           ],
         ),
       ),
