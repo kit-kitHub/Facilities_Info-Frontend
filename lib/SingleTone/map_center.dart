@@ -10,18 +10,18 @@ class mapCenterManager {
   // 팩토리 생성자
   factory mapCenterManager() => _instance;
 
-  // 기본 위치 좌표
+  // 폰트 크기 기본값
   static const double _defaultmapCenterlatitude = 37.3608681;
   static const double _defaultmapCenterlongitude = 126.9306506;
 
   // SharedPreferences 인스턴스
   SharedPreferences? _prefs;
 
-  // 위치 좌표 변수
+  // 폰트 크기 상태 변수
   double _mapCenterlatitude = _defaultmapCenterlatitude;
   double _mapCenterlongitude = _defaultmapCenterlongitude;
 
-  // 초기화 (SharedPreferences 로드 및 위치 좌표 불러오기)
+  // 초기화 (SharedPreferences 로드 및 폰트 크기 불러오기)
   Future<void> initialize() async {
     _prefs = await SharedPreferences.getInstance();
     _mapCenterlatitude = _prefs?.getDouble('latitude') ?? _defaultmapCenterlatitude;
@@ -32,15 +32,19 @@ class mapCenterManager {
   double get mapCenterlatitude => _mapCenterlatitude;
   double get mapCenterlongitude => _mapCenterlongitude;
 
-  // 현재 위치 Setter (저장 포함)
-  set mapCenterlatitude(double value) {
+  Future<void> setMapCenterLatitude(double value) async {
     _mapCenterlatitude = value;
-    _prefs?.setDouble('latitude', value);
+    if (_prefs != null) {
+      await _prefs!.setDouble('latitude', value); // 값 저장
+    }
   }
 
-  set mapCenterlongitude(double value) {
+  /// 경도 값 설정 및 영구 저장
+  Future<void> setMapCenterLongitude(double value) async {
     _mapCenterlongitude = value;
-    _prefs?.setDouble('longitude', value);
+    if (_prefs != null) {
+      await _prefs!.setDouble('longitude', value); // 값 저장
+    }
   }
 
 }
