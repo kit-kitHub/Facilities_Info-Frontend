@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '/SingleTone/font.dart';
+import '/SingleTone/Recent_Search.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -77,7 +78,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
             child: TextField(
               decoration: InputDecoration(
                 hintText: '검색 내용 작성칸',
-                hintStyle: TextStyle(fontSize: fontSizeManager.fontSize - 4),
+                hintStyle: TextStyle(fontSize: fontSizeManager.fontSize),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(vertical: 8.0),
               ),
@@ -97,12 +98,12 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
           controller: _tabController,
           labelColor: Colors.blue,
           labelStyle: TextStyle(
-            fontSize: fontSizeManager.fontSize - 4,
+            fontSize: fontSizeManager.fontSize,
             fontWeight: FontWeight.bold,
           ),
           unselectedLabelColor: Colors.black,
           unselectedLabelStyle: TextStyle(
-            fontSize: fontSizeManager.fontSize - 4,
+            fontSize: fontSizeManager.fontSize,
           ),
           indicatorColor: Colors.blue,
           tabs: [
@@ -147,11 +148,40 @@ class MenuButton extends StatelessWidget {
           children: [
             Icon(icon, size: 20, color: Colors.black54),
             SizedBox(width: 12),
-            Text(text, style: TextStyle(color: Colors.black87, fontSize: fontSizeManager.fontSize - 4)),
+            Text(text, style: TextStyle(color: Colors.black87, fontSize: fontSizeManager.fontSize)),
           ],
         ),
       ),
     );
+  }
+}
+
+class RecentSearch {
+  static final RecentSearch _instance = RecentSearch._internal();
+
+  factory RecentSearch() => _instance;
+
+  RecentSearch._internal();
+
+  final List<Map<String, String>> _recentSearches = [];
+
+  List<Map<String, String>> get recentSearches => _recentSearches;
+
+  void addRecentSearch(String name, String description) {
+    _recentSearches.insert(0, {'name': name, 'description': description});
+  }
+
+  void removeRecentSearch(int index) {
+    if (index >= 0 && index < _recentSearches.length) {
+      _recentSearches.removeAt(index);
+    }
+  }
+
+  Map<String, String>? getRecentSearchByIndex(int index) {
+    if (index >= 0 && index < _recentSearches.length) {
+      return _recentSearches[index];
+    }
+    return null;
   }
 }
 
@@ -161,11 +191,7 @@ class RecentSearchScreen extends StatefulWidget {
 }
 
 class _RecentSearchScreenState extends State<RecentSearchScreen> {
-  final List<Map<String, String>> recentSearches = [
-    {'name': '금오공과대학교', 'url': 'https://kumoh.ac.kr'},
-    {'name': '양포동 행정복지센터', 'url': 'https://yangpocity.kr'},
-    {'name': '거의동 병원', 'url': 'https://geoidonghospital.kr'},
-  ];
+  final recentSearch = RecentSearch();
   final fontSizeManager = FontSizeManager();
   final TextEditingController _textEditingController = TextEditingController();
 
@@ -180,18 +206,17 @@ class _RecentSearchScreenState extends State<RecentSearchScreen> {
         title: TextField(
           controller: _textEditingController,
           textInputAction: TextInputAction.go,
-          onSubmitted: (value) async {
-            // Add entered value to recent searches list if it's not empty
+          onSubmitted: (String value) {
             if (value.isNotEmpty) {
               setState(() {
-                recentSearches.insert(0, {'name': value, 'url' : 'fdsafas'}); // Insert at the beginning of the list
+                recentSearch.addRecentSearch(value, '검색 기록'); // 새로운 검색 추가
               });
-              _textEditingController.clear(); // Clear the TextField after submission
+              _textEditingController.clear();
             }
           },
           decoration: InputDecoration(
             hintText: '검색 내용 작성칸',
-            hintStyle: TextStyle(color: Colors.grey, fontSize: fontSizeManager.fontSize - 4),
+            hintStyle: TextStyle(color: Colors.grey, fontSize: fontSizeManager.fontSize),
             border: InputBorder.none,
           ),
         ),
@@ -199,7 +224,7 @@ class _RecentSearchScreenState extends State<RecentSearchScreen> {
           IconButton(
             icon: Icon(Icons.mic),
             onPressed: () {
-              // Handle microphone action
+              // 음성 검색 기능 처리
             },
           ),
         ],
@@ -209,25 +234,31 @@ class _RecentSearchScreenState extends State<RecentSearchScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('최근검색', style: TextStyle(fontSize: fontSizeManager.fontSize + 2, fontWeight: FontWeight.bold)),
+            Text('최근 검색',
+                style: TextStyle(fontSize: fontSizeManager.fontSize + 2, fontWeight: FontWeight.bold)),
             Divider(),
             Expanded(
               child: ListView.builder(
-                itemCount: recentSearches.length,
+                itemCount: recentSearch.recentSearches.length,
                 itemBuilder: (context, index) {
+                  Map<String, String>? search = recentSearch.getRecentSearchByIndex(index);
                   return Row(
                     children: [
                       Flexible(
                         flex: 13,
                         child: TextButton(
                           onPressed: () {
-
+                            // 검색 항목 클릭 시 동작
                           },
                           child: Row(
                             children: [
-                              Icon(Icons.search),
+                              Icon(Icons.search, color: Colors.grey),
                               SizedBox(width: 16),
-                              Text(recentSearches[index]['name']!, style: TextStyle(color: Colors.black87, fontSize: fontSizeManager.fontSize - 2)),
+                              Text(
+                                search?['name'] ?? '',
+                                style: TextStyle(
+                                    color: Colors.black87, fontSize: fontSizeManager.fontSize),
+                              ),
                             ],
                           ),
                         ),
@@ -238,7 +269,7 @@ class _RecentSearchScreenState extends State<RecentSearchScreen> {
                           icon: Icon(Icons.close),
                           onPressed: () {
                             setState(() {
-                              recentSearches.removeAt(index); // Remove item from recent searches
+                              recentSearch.removeRecentSearch(index); // 검색 항목 삭제
                             });
                           },
                         ),
