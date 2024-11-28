@@ -10,14 +10,13 @@ class mapCenterManager {
   // 팩토리 생성자
   factory mapCenterManager() => _instance;
 
-  // 폰트 크기 기본값
   static const double _defaultmapCenterlatitude = 37.3608681;
   static const double _defaultmapCenterlongitude = 126.9306506;
 
   // SharedPreferences 인스턴스
   SharedPreferences? _prefs;
 
-  // 폰트 크기 상태 변수
+
   double _mapCenterlatitude = _defaultmapCenterlatitude;
   double _mapCenterlongitude = _defaultmapCenterlongitude;
 
@@ -39,7 +38,7 @@ class mapCenterManager {
     }
   }
 
-  /// 경도 값 설정 및 영구 저장
+  // 경도 값 설정 및 영구 저장
   Future<void> setMapCenterLongitude(double value) async {
     _mapCenterlongitude = value;
     if (_prefs != null) {

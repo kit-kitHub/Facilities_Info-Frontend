@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
@@ -94,3 +95,58 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+/*
+import 'package:flutter/material.dart';
+import 'Controller/facilities_search_page.dart';
+import 'Controller/geo_coordinates_page.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Facilities and Geo Coordinates',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Home'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FacilitiesSearchPage()),
+                );
+              },
+              child: Text('Facilities Search'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => GeoCoordinatesPage()),
+                );
+              },
+              child: Text('Geo Coordinates'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}*/

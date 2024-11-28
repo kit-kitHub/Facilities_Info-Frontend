@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
-import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 
 import '/SingleTone/map_center.dart';//화면 이동해도 화면 남아있게 하기위해 사용하는 싱글톤
 
@@ -26,7 +25,6 @@ void startTracking() async {
       distanceFilter: 1, // 최소 이동 거리 (5미터)
     ),
   ).listen((Position position) {
-    LatLng currentPosition = LatLng(position.latitude, position.longitude);
     mapcentermanager.setMapCenterLongitude(position.longitude);
     mapcentermanager.setMapCenterLatitude(position.latitude);
   });
