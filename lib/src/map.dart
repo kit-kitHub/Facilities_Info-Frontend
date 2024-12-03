@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:facilities_info/src/search.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
@@ -26,8 +27,8 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
   String? latitude;
   String? longitude;
   bool isTracking = false;
-  int level = 4;
   bool isRunning = false;
+  int currentLevel = mapCenterManager().level;
   final mapcentermanager = mapCenterManager();
 
   //마커 띄울때 사용하는 함수
@@ -79,6 +80,18 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
     mapCenterManager().initialize(); // 싱글톤 초기화
 
     _restoreLastPosition(); // 마지막 위치 복원
+    _restoreCurrentLevel(); // 마지막 레벨 복원
+  }
+
+  Future<void> _saveCurrentLevel() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('map_level', currentLevel);
+  }
+
+  Future<void> _restoreCurrentLevel() async {
+    final prefs = await SharedPreferences.getInstance();
+    currentLevel = prefs.getInt('map_level') ?? mapCenterManager().level;
+    mapController.setLevel(currentLevel); // 복원된 레벨 적용
   }
 
   Future<void> _restoreLastPosition() async {
@@ -103,6 +116,8 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
       final prefs = await SharedPreferences.getInstance();
       await prefs.setDouble('last_latitude', center.latitude);
       await prefs.setDouble('last_longitude', center.longitude);
+
+      await _saveCurrentLevel(); // 레벨 저장
     }
   }
 
@@ -125,7 +140,7 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
     positionStream = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
-        distanceFilter: 1, // 최소 이동 거리 (5미터)
+        distanceFilter: 1,
       ),
     ).listen((Position position) {
       mapcentermanager.setMapCenterLongitude(position.longitude);
@@ -151,8 +166,8 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                 child: KakaoMap(
                   onMapCreated: (controller) async {
                     mapController = controller;
-                    List<GeoCoordinates> positionsList = await fetchGeoCoordinates(mapcentermanager.mapCenterlatitude, mapcentermanager.mapCenterlongitude, 10);
-
+                    List<GeoCoordinates> positionsList = await fetchGeoCoordinates(36.1465, 128.3935, 10);
+                    controller.setLevel(mapcentermanager.level);
                     for (var position in positionsList) {
                       LatLng newPosition = LatLng(position.latitude, position.longitude);
                       print('Latitude: ${position.latitude}, Longitude: ${position.longitude}');
@@ -161,7 +176,9 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                     },
                     markers: markers.toList(),
                   onZoomChangeCallback: (maplevel, context){
-                    level = maplevel;
+                    //zoomlevel저장
+                    currentLevel = maplevel;
+                    mapcentermanager.setLevel(maplevel);
                   },
                   clusterer: Clusterer(
                     markers: markers.toList(),
@@ -169,9 +186,12 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                     averageCenter: true,
                   ),
                   zoomControl: false,
-                  onCameraIdle: (LatLng postions, int num){
+                  onCameraIdle: (LatLng postions, int maplevel){
                     mapcentermanager.setMapCenterLongitude(postions.longitude);
                     mapcentermanager.setMapCenterLatitude(postions.latitude);
+                    //현재 level정보 저장
+                    currentLevel = maplevel;
+                    mapcentermanager.setLevel(maplevel);
                   },
                   center: LatLng(mapcentermanager.mapCenterlatitude, mapcentermanager.mapCenterlongitude),
                     onMarkerTap: (String markerId, LatLng position, int index1) async {
@@ -181,7 +201,7 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                       // 해당 마커의 위치 찾기
                       final int index = positionsList.indexWhere((positions) {
                         // 소수점 4자리까지 반올림하여 비교
-                        double lat1 = (positions.latitude * pow(10, 4)).roundToDouble() / pow(10, 4);
+                        double lat1 = (positions.latitude * pow(10  , 4)).roundToDouble() / pow(10, 4);
                         double lon1 = (positions.longitude * pow(10, 4)).roundToDouble() / pow(10, 4);
                         double lat2 = (position.latitude * pow(10, 4)).roundToDouble() / pow(10, 4);
                         double lon2 = (position.longitude * pow(10, 4)).roundToDouble() / pow(10, 4);
@@ -195,11 +215,11 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                       // 화면 갱신 후 모달 표시 (지연을 추가)
                       mapController.setCenter(position);
 
+                      //화면 확대 해서 보여주기
+                      mapController.setLevel(1);
+
                       // 화면이 갱신될 시간을 주기 위해 잠시 딜레이
                       await Future.delayed(Duration(milliseconds: 300));
-
-                      // level 설정 (원하는 레벨로 설정)
-                      level = 4;
 
                       // 모달 바텀 시트 표시
                       showModalBottomSheet(
@@ -218,7 +238,7 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                                 address: foundPosition.facility.address,
                                 imageUrl: foundPosition.facility.imageUrl,
                                 description: foundPosition.facility.address,
-                                rating: foundPosition.facility.rating.toString(),
+                                rating: foundPosition.facility.rating.toInt(),
                               );
                             },
                           );
@@ -262,8 +282,11 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                       ),
                       backgroundColor: Colors.white,
                       onPressed: () async {
-                        level = level - 1;
-                        mapController.setLevel(level);
+                        setState(() {
+                          currentLevel = currentLevel - 1;
+                        });
+                        mapController.setLevel(currentLevel);
+                        _saveCurrentLevel(); // 변경된 레벨 저장
                       },
                       child: const Icon(Icons.add),
                     ),
@@ -274,8 +297,12 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                       ),
                       backgroundColor: Colors.white,
                       onPressed: () async {
-                        level = level + 1;
-                        mapController.setLevel(level);
+                        setState(() {
+                        currentLevel = currentLevel + 1;
+                        });
+
+                        mapController.setLevel(currentLevel);
+                        _saveCurrentLevel(); // 변경된 레벨 저장
                       },
                       child: const Icon(Icons.remove),
                     ),
@@ -365,10 +392,7 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => PositionListScreen(
-                                positions: positionsList,
-                                center: center,
-                              ),
+                              builder: (context) => SearchScreen(),
                             ),
                           );
                         },
