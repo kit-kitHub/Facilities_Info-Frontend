@@ -20,8 +20,8 @@ class _NoticeListPageState extends State<NoticeListPage> {
   }
 
   Future<void> fetchArticles() async {
-    final noticesResponse = await http.get(Uri.parse('http://10.0.2.2:8080/articles/notices'));
-    final faqsResponse = await http.get(Uri.parse('http://10.0.2.2:8080/articles/faqs'));
+    final noticesResponse = await http.get(Uri.parse('http://3.34.105.70:8080/articles/notices'));
+    final faqsResponse = await http.get(Uri.parse('http://3.34.105.70:8080/articles/faqs'));
 
     if (noticesResponse.statusCode == 200 && faqsResponse.statusCode == 200) {
       setState(() {

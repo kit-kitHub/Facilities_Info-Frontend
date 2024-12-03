@@ -25,7 +25,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
   }
 
   Future<void> fetchArticles() async {
-    final faqsResponse = await http.get(Uri.parse('http://10.0.2.2:8080/articles/faqs'));
+    final faqsResponse = await http.get(Uri.parse('http://3.34.105.70:8080/articles/faqs'));
 
     if (faqsResponse.statusCode == 200) {
       setState(() {

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../main.dart';
+import '../../models/user.dart';
 import '../../screens/login_screen.dart';
+import '../../services/api_service.dart';
 
 class CompleteRegistrationPage extends StatelessWidget {
   final TextEditingController passwordController = TextEditingController();
@@ -10,6 +13,16 @@ class CompleteRegistrationPage extends StatelessWidget {
   final String nickname;
 
   CompleteRegistrationPage({required this.email, required this.nickname});
+
+
+    void _signup() async {
+    String password = passwordController.text;
+
+    User user = User(email: email, password: password, nickname: nickname);
+    String result = await ApiService.registerLocalUser(user);
+
+    // Handle the result accordingly
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +82,11 @@ class CompleteRegistrationPage extends StatelessWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('회원가입이 완료되었습니다!')),
                       );
+                      _signup();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => LoginScreen(), // 전달
+                          builder: (context) => HomeScreen(), // 전달
                         ),
                       );
                     }

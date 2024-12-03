@@ -5,7 +5,6 @@ import '../Controller/geo_coordinates_service.dart';
 import '../SingleTone/map_center.dart';
 import '../main.dart';
 import '/SingleTone/font.dart';
-import 'RecentSearchScreen.dart';
 import 'map/Locations.dart';
 import 'map/geolocation.dart';
 
