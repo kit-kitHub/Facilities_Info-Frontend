@@ -1,10 +1,10 @@
 
+import 'package:facilities_info/src/RecentSearchScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 
 import 'src/map.dart';
-import 'src/search.dart';
 import 'src/menu.dart';
 
 import 'SingleTone/font.dart';
@@ -62,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _screens = [
     const MapScreen() ,
-    const SearchScreen(),
+    RecentSearchScreen(),
     const MenuScreen(),
   ];
 
