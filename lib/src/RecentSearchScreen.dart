@@ -108,6 +108,7 @@ class _RecentSearchScreenState extends State<RecentSearchScreen> {
                                 });
                                 mapcentermanager.setMapCenterLongitude(longitude);
                                 mapcentermanager.setMapCenterLatitude(latitude);
+                                mapcentermanager.setLevel(1);
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(builder: (context) => const HomeScreen()),
