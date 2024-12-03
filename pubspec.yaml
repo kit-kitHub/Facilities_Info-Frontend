@@ -43,12 +43,29 @@ dependencies:
 
   image_picker: ^0.8.4+7
 
+  # 디바이스 정보를 얻어오기 위한 패키지
+  device_info_plus: ^10.0.0
+
+  # 앱 버전을 얻어오기 위한 패키지
+  package_info_plus: ^4.0.0
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_dotenv: ^5.2.1
 
+  flutter_html: ^3.0.0-beta.2
+
+  flutter_math_fork: ^0.7.2
+
+  flutter_layout_grid: ^2.0.7
+
+  #년/월/일 순서로 나오도록 만들 때 사용
+  intl: ^0.18.0
+
 dev_dependencies:
+  #메일 보내주는 기능
+  mailer: ^6.2.0
   flutter_test:
     sdk: flutter
 
