@@ -116,17 +116,11 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
       appBar: AppBar(
         leading: Icon(Icons.circle, color: Colors.white),
         title: GestureDetector(
-          onTap: () {
-            // Navigate to RecentSearchScreen when tapped
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => RecentSearchScreen()),
-            );
-          },
+          onTap: () {},
           child: AbsorbPointer(
             child: TextField(
               decoration: InputDecoration(
-                hintText: '검색 내용 작성칸',
+                hintText: '근처 정보 보기',
                 hintStyle: TextStyle(fontSize: fontSizeManager.fontSize - 4),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(vertical: 8.0),
@@ -195,7 +189,7 @@ class MenuButton extends StatelessWidget {
         onPressed: () {
           mapcentermanager.setMapCenterLongitude(position.longitude);
           mapcentermanager.setMapCenterLatitude(position.latitude);
-
+          mapcentermanager.setLevel(1);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const HomeScreen()),
