@@ -239,6 +239,7 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                                 imageUrl: foundPosition.facility.imageUrl,
                                 description: foundPosition.facility.address,
                                 rating: foundPosition.facility.rating.toInt(),
+                                facilityId: foundPosition.facility.id,
                               );
                             },
                           );

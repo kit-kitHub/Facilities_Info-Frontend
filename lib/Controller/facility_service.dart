@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class Facility {
+  final int id;
   final String name;
   final String address;
   final String description;
@@ -10,6 +11,7 @@ class Facility {
   final String type;
 
   Facility({
+    required this.id,
     required this.name,
     required this.address,
     required this.description,
@@ -20,6 +22,7 @@ class Facility {
 
   factory Facility.fromJson(Map<String, dynamic> json) {
     return Facility(
+      id: json['id'],
       name: json['name'] ?? 'No name',             // Null 방지
       address: json['address'] ?? 'No address',     // Null 방지
       description: json['description'] ?? '',      // 기본값 할당
@@ -36,7 +39,7 @@ Future<List<Facility>> searchFacilities({String? name, String? type}) async {
     if (type != null) 'type': type,
   };
 
-  final uri = Uri.http('3.34.105.70:8080', 'api/facilities/search', queryParameters);
+  final uri = Uri.http('192.168.0.6:8080', 'api/facilities/search', queryParameters);
 
   final response = await http.get(uri, headers: {'Content-Type': 'application/json; charset=UTF-8'});
 

@@ -1,14 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:facilities_info/src/Register/register.dart';
+import 'package:http/http.dart' as http;
 
-class DuplicateCheckPage extends StatelessWidget {
-  final TextEditingController nicknameController = TextEditingController();
-
-
+class DuplicateCheckPage extends StatefulWidget {
   final String email;
   final String errorMessage;
 
   DuplicateCheckPage({required this.email, required this.errorMessage});
+
+  @override
+  _DuplicateCheckPage createState() => _DuplicateCheckPage();
+}
+
+class _DuplicateCheckPage extends State<DuplicateCheckPage> {
+  final TextEditingController nicknameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+
+  String nickname = '';
+
+  @override
+  void initState() {
+    super.initState();
+    emailController.text = widget.email;
+  }
+
+  Future<void> _checkNickname() async {
+    final response = await http.get(
+      Uri.parse('http://10.0.2.2:8080/api/auth/checkNickname/${nicknameController.text.trim()}'),
+    );
+    setState(() {
+      if (response.statusCode == 200) {
+        nickname = '사용 가능한 닉네임입니다.';
+      } else if (response.statusCode == 409) {
+        nickname = '이미 사용 중인 닉네임입니다.';
+      } else {
+        nickname = '오류가 발생했습니다.';
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,19 +52,17 @@ class DuplicateCheckPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 24),
-              // 읽기 전용 이메일 필드
               TextFormField(
-                initialValue: email, // 전달받은 이메일 값 표시
-                readOnly: true, // 읽기 전용 설정
+                controller: emailController,
+                readOnly: true,
                 decoration: InputDecoration(
                   labelText: '이메일',
                   border: OutlineInputBorder(),
                 ),
               ),
               SizedBox(height: 24),
-              // 닉네임 입력 필드
               TextFormField(
-                controller: nicknameController, // 이메일 입력값을 이 컨트롤러에 저장
+                controller: nicknameController,
                 decoration: InputDecoration(
                   labelText: '닉네임',
                   hintText: '닉네임을 입력하세요',
@@ -46,16 +73,20 @@ class DuplicateCheckPage extends StatelessWidget {
               SizedBox(height: 24),
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
-                    String nickname = nicknameController.text.trim();
-
-                    if (nickname.isNotEmpty) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CompleteRegistrationPage(email: email, nickname: nickname), // 전달
-                        ),
-                      );
+                  onPressed: () async {
+                    if (nicknameController.text.trim().isNotEmpty) {
+                      await _checkNickname();
+                      if (nickname == '사용 가능한 닉네임입니다.') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CompleteRegistrationPage(
+                              email: widget.email,
+                              nickname: nicknameController.text.trim(),
+                            ),
+                          ),
+                        );
+                      }
                     }
                   },
                   child: Text('계속하기'),

@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';  // intl 패키지 import
-import 'package:shared_preferences/shared_preferences.dart'; // 로그인 상태 저장 예시
-import 'package:facilities_info/screens/login_screen.dart'; // 로그인 화면으로 이동할 때 사용 (예시)
+import '../../review/api_controller.dart';
+import '../../review/facility_review_edit_screen.dart'; // ApiController 사용
 
-//마커의 정보가 보여지는 칸
 class DraggableSheet extends StatefulWidget {
   final ScrollController scrollController;
   final String title;
   final String address;
   final String imageUrl;
   final String description;
-  final int rating; // rating을 int로 변경
+  final int rating;
+  final int facilityId;
 
   DraggableSheet({
     required this.scrollController,
@@ -19,6 +18,7 @@ class DraggableSheet extends StatefulWidget {
     required this.imageUrl,
     required this.description,
     required this.rating,
+    required this.facilityId,
   });
 
   @override
@@ -26,72 +26,56 @@ class DraggableSheet extends StatefulWidget {
 }
 
 class _DraggableSheetState extends State<DraggableSheet> {
-  bool _isLiked = false; // 좋아요 상태
+  bool _isLiked = false;
   late int _currentRating;
-  List<Map<String, String>> _reviews = []; // 리뷰 리스트
-  final TextEditingController _reviewController = TextEditingController(); // 리뷰 작성 컨트롤러
+  List<Map<String, dynamic>> _reviews = [];
+  final TextEditingController _reviewController = TextEditingController();
 
-  bool _isLoggedIn = false; // 로그인 여부 상태
-
-  void _fetchReviews() {
-    setState(() {
-      _reviews = [
-        {'username': '사용자 이름1', 'review': '리뷰 내용1', 'date': '2024/11/06'},
-        {'username': '사용자 이름2', 'review': '리뷰 내용2', 'date': '2024/11/07'},
-      ];
-    });
-  }
   @override
   void initState() {
     super.initState();
     _currentRating = widget.rating;
-    _fetchReviews();
-    _checkLoginStatus(); // 로그인 상태 확인
+    _fetchFacilityAndReviews();
   }
 
-  Future<void> _checkLoginStatus() async {
-    // SharedPreferences를 사용하여 로그인 상태 확인
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _isLoggedIn = prefs.getBool('isLoggedIn') ?? false; // 로그인 여부 체크
-    });
-  }
-
-  void _toggleLike() {
-    setState(() {
-      _isLiked = !_isLiked;
-      _currentRating += _isLiked ? 1 : -1;
-    });
-  }
-
-  void _submitReview() {
-    if (!_isLoggedIn) {
-      _navigateToLogin();
-      return;
-    }
-
-    if (_reviewController.text.isNotEmpty) {
-      String formattedDate = DateFormat('yyyy/MM/dd').format(DateTime.now());
-
-      final newReview = {
-        'username': '사용자 이름3', // 사용자 이름 (예시)
-        'review': _reviewController.text,
-        'date': formattedDate,
-      };
-
+  Future<void> _fetchFacilityAndReviews() async {
+    try {
+      final facilityData = await ApiController.getFacilityWithReviews(widget.facilityId);
       setState(() {
-        _reviews.add(newReview);
+        _reviews = List<Map<String, dynamic>>.from(facilityData['reviews']);
       });
-
-      _reviewController.clear();
+    } catch (e) {
+      print('Error fetching facility and reviews: $e');
     }
   }
 
-  void _navigateToLogin() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => LoginScreen()), // 로그인 화면으로 이동
-    );
+  Future<void> _submitReview(Map<String, dynamic> newReview) async {
+    try {
+      final response = await ApiController.addReview(newReview);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        setState(() {
+          _reviews.add(newReview);
+          _reviewController.clear();
+        });
+      } else {
+        print('Failed to add review');
+      }
+    } catch (e) {
+      print('Error submitting review: $e');
+    }
+  }
+
+  Future<void> _toggleLike(int reviewId) async {
+    try {
+      final response = await ApiController.toggleLike(reviewId);
+      if (response.statusCode == 200) {
+        setState(() {
+          _isLiked = !_isLiked;
+        });
+      }
+    } catch (e) {
+      print('Error toggling like: $e');
+    }
   }
 
   @override
@@ -99,16 +83,7 @@ class _DraggableSheetState extends State<DraggableSheet> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(16),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.transparent,
-            blurRadius: 5,
-            offset: Offset(0, -3),
-          ),
-        ],
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       child: ListView(
         controller: widget.scrollController,
@@ -118,67 +93,69 @@ class _DraggableSheetState extends State<DraggableSheet> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  widget.title,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
+                Text(widget.title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
-                Text(
-                  widget.address,
-                  style: TextStyle(color: Colors.grey[700]),
-                ),
+                Text(widget.address, style: TextStyle(color: Colors.grey[700])),
                 SizedBox(height: 16),
-                Image.network(
-                  widget.imageUrl,
-                  fit: BoxFit.cover,
-                ),
+                Image.network(widget.imageUrl, fit: BoxFit.cover),
                 SizedBox(height: 16),
                 Text(widget.description, style: TextStyle(fontSize: 16)),
                 SizedBox(height: 16),
+
+                // 별점 표시 부분
                 Row(
-                  children: [
-                    Text(
-                      _currentRating.toString(),
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(width: 8),
-                    GestureDetector(
-                      onTap: _toggleLike,
-                      child: Icon(
-                        _isLiked ? Icons.thumb_up : Icons.thumb_up_off_alt,
-                        color: _isLiked ? Colors.blue : Colors.grey,
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Text('리뷰 ${_reviews.length}개'),
-                  ],
+                  children: List.generate(5, (index) {
+                    return Icon(
+                      index < _currentRating ? Icons.star : Icons.star_border,
+                      color: Colors.amber,
+                    );
+                  }),
                 ),
                 SizedBox(height: 16),
+
                 TextField(
                   controller: _reviewController,
+                  readOnly: true,
+                  onTap: () async {
+                    final newReview = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FacilityReviewEditScreen(),
+                        settings: RouteSettings(arguments: widget.facilityId),
+                      ),
+                    );
+
+                    if (newReview != null) {
+                      _submitReview(newReview); // 새로운 리뷰 저장
+                    }
+                  },
                   decoration: InputDecoration(
-                    labelText: '리뷰 작성하기',
+                    hintText: '리뷰 작성 또는 수정하기',
                     border: OutlineInputBorder(),
                   ),
                 ),
                 SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: _submitReview,
-                  child: Text('리뷰 제출하기'),
-                ),
-                SizedBox(height: 16),
                 Divider(),
                 if (_reviews.isNotEmpty)
-                  ..._reviews.map(
-                        (review) => ListTile(
+                  ..._reviews.map((review) {
+                    return ListTile(
                       leading: CircleAvatar(),
-                      title: Text(review['username']!),
-                      subtitle: Text(review['review']!),
-                      trailing: Text(review['date']!),
-                    ),
-                  ).toList(),
+                      title: Text(review['username'] ?? 'Unknown'),
+                      subtitle: Text(review['content']),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(review['date']),
+                          IconButton(
+                            icon: Icon(_isLiked ? Icons.thumb_up : Icons.thumb_up_off_alt),
+                            onPressed: () => _toggleLike(review['id']),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
                 if (_reviews.isEmpty)
-                  Center(child: Text("리뷰가 없습니다.")),
+                  Center(child: Text('리뷰가 없습니다.')),
               ],
             ),
           ),
