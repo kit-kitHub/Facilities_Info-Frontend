@@ -7,8 +7,8 @@ import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Controller/geo_coordinates_service.dart';
+import 'addmapmaker/AddLocation.dart';
 import 'map/makerInfo.dart'; //마커 누르면 정보 보여주는 화면
-import 'map/userCreate.dart'; //추가하기 받아오기
 import 'map/Locations.dart'; //주위 정보 받아오기
 import '/SingleTone/map_center.dart';//화면 이동해도 화면 남아있게 하기위해 사용하는 싱글톤
 
@@ -322,37 +322,13 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                           borderRadius: BorderRadius.circular(90),
                         ),
                         backgroundColor : Colors.white,
-                        onPressed: () async {
-                          if (isRunning) {
-                            setState(() {
-                              isRunning = false;
-                              var moveLatLon = LatLng(mapcentermanager.mapCenterlatitude - 0.00125, mapcentermanager.mapCenterlongitude);
-                              mapController.panTo(moveLatLon);
-                              showModalBottomSheet(
-                                context: context,
-                                barrierColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                                ),
-                                builder: (context) {
-                                  return BottomSheetContent_find();
-                                },
-                              );
-                            });
-                          }
-                          else {
-                            setState(() {
-                              isRunning = true;
-                            });
-
-                            while (isRunning) {
-                              await Future.delayed(Duration(milliseconds: 10));
-                              LatLng center = await mapController.getCenter();
-                              mapcentermanager.setMapCenterLongitude(center.longitude);
-                              mapcentermanager.setMapCenterLatitude(center.latitude);
-                              updateMarker_Use_Add(center);
-                            }
-                          }
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddLocationScreen(),
+                            ),
+                          );
                         },
                         label: const Text('추가하기', style: TextStyle(color: Colors.black)),
                       ),
