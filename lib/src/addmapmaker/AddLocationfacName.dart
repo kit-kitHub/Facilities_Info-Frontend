@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'AddDetailedLocationScreen.dart';
+import '../../SingleTone/font.dart';
 
 class AddLocationfacNameScreen extends StatelessWidget {
   final TextEditingController Facname = TextEditingController();
+  final fontSizeManager = FontSizeManager();
 
   @override
   Widget build(BuildContext context) {
@@ -12,11 +14,11 @@ class AddLocationfacNameScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
+        title: Text(
           '추가하기',
           style: TextStyle(
             color: Colors.black,
-            fontSize: 16,
+            fontSize: fontSizeManager.fontSize,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -28,10 +30,10 @@ class AddLocationfacNameScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            const Text(
+            Text(
               '시설물이 위치한\n장소의 이름을 입력해 주세요',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: fontSizeManager.fontSize + 4,
                 fontWeight: FontWeight.w600,
                 height: 1.4,
               ),
@@ -43,7 +45,7 @@ class AddLocationfacNameScreen extends StatelessWidget {
                 hintText: '장소 이름',
                 hintStyle: TextStyle(
                   color: Colors.grey[400],
-                  fontSize: 16,
+                  fontSize: fontSizeManager.fontSize,
                 ),
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.grey[300]!),
@@ -59,7 +61,7 @@ class AddLocationfacNameScreen extends StatelessWidget {
               '(예 : 국립금오공과대학교 디지털관)',
               style: TextStyle(
                 color: Colors.grey[500],
-                fontSize: 14,
+                fontSize: fontSizeManager.fontSize - 2,
               ),
             ),
             const Spacer(),
@@ -82,11 +84,11 @@ class AddLocationfacNameScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   '다음',
                   style: TextStyle(
-                    color: Color(0xFF2AAE66),
-                    fontSize: 16,
+                    color: const Color(0xFF2AAE66),
+                    fontSize: fontSizeManager.fontSize,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

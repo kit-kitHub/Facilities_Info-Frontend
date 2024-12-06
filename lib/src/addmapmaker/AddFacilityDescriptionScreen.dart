@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../main.dart';
+import '../../SingleTone/font.dart';
+
 
 class AddFacilityDescriptionScreen extends StatefulWidget {
   const AddFacilityDescriptionScreen({super.key});
@@ -11,6 +13,7 @@ class AddFacilityDescriptionScreen extends StatefulWidget {
 
 class _AddFacilityDescriptionScreenState extends State<AddFacilityDescriptionScreen> {
   final TextEditingController _descriptionController = TextEditingController();
+  final fontSizeManager = FontSizeManager();
 
   @override
   void dispose() {
@@ -25,11 +28,11 @@ class _AddFacilityDescriptionScreenState extends State<AddFacilityDescriptionScr
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
+        title: Text(
           '추가하기',
           style: TextStyle(
             color: Colors.black,
-            fontSize: 16,
+            fontSize: fontSizeManager.fontSize,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -41,10 +44,10 @@ class _AddFacilityDescriptionScreenState extends State<AddFacilityDescriptionScr
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            const Text(
+            Text(
               '시설물에 대한\n설명을 적어주세요',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: fontSizeManager.fontSize + 4,
                 fontWeight: FontWeight.w600,
                 height: 1.4,
               ),
@@ -56,7 +59,7 @@ class _AddFacilityDescriptionScreenState extends State<AddFacilityDescriptionScr
                 hintText: '설명',
                 hintStyle: TextStyle(
                   color: Colors.grey[400],
-                  fontSize: 16,
+                  fontSize: fontSizeManager.fontSize,
                 ),
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.grey[300]!),
@@ -89,11 +92,11 @@ class _AddFacilityDescriptionScreenState extends State<AddFacilityDescriptionScr
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   '완료',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 16,
+                    fontSize: fontSizeManager.fontSize,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

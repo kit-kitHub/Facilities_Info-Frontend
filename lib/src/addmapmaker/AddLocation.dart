@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
+import '../../SingleTone/font.dart';
 import '../../SingleTone/map_center.dart';
 import 'AddLocationimg.dart';
 
@@ -13,6 +14,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
   final mapcentermanager = mapCenterManager();
   LatLng? currentCenter; // 현재 지도 중심 좌표 저장
   Set<Marker> centerMarker = {};// 중심 마커
+  final fontSizeManager = FontSizeManager();
 
   @override
   void initState() {
@@ -35,7 +37,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
-        titleTextStyle: TextStyle(color: Colors.black, fontSize: 18),
+        titleTextStyle: TextStyle(color: Colors.black, fontSize: fontSizeManager.fontSize + 2),
         iconTheme: IconThemeData(color: Colors.black),
       ),
       body: Column(
@@ -45,7 +47,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
             left: 20,
             child: Text(
               '지도를 움직여\n추가할 시설의 위치를 설정해 주세요',
-              style: TextStyle(fontSize: 16, color: Colors.black),
+              style: TextStyle(fontSize: fontSizeManager.fontSize, color: Colors.black),
             ),
           ),
           Expanded(
@@ -93,7 +95,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
               },
               child: Text(
                 '다음',
-                style: TextStyle(color: Colors.green),
+                style: TextStyle(color: Colors.green, fontSize: fontSizeManager.fontSize),
               ),
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: Colors.green),

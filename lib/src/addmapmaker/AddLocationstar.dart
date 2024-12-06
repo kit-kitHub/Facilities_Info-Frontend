@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'AddFacilityDescriptionScreen.dart';
+import '../../SingleTone/font.dart';
 
 class RateFacilityScreen extends StatefulWidget {
   const RateFacilityScreen({super.key});
@@ -11,6 +12,7 @@ class RateFacilityScreen extends StatefulWidget {
 
 class _RateFacilityScreenState extends State<RateFacilityScreen> {
   double rating = 0;
+  final fontSizeManager = FontSizeManager();
 
   @override
   Widget build(BuildContext context) {
@@ -19,11 +21,11 @@ class _RateFacilityScreenState extends State<RateFacilityScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
+        title: Text(
           '추가하기',
           style: TextStyle(
             color: Colors.black,
-            fontSize: 16,
+            fontSize: fontSizeManager.fontSize,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -35,10 +37,10 @@ class _RateFacilityScreenState extends State<RateFacilityScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            const Text(
+            Text(
               '시설물의 편의성을\n평가해 주세요',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: fontSizeManager.fontSize + 4,
                 fontWeight: FontWeight.w600,
                 height: 1.4,
               ),
@@ -90,7 +92,7 @@ class _RateFacilityScreenState extends State<RateFacilityScreen> {
                   '다음',
                   style: TextStyle(
                     color: rating > 0 ? const Color(0xFF2AAE66) : Colors.grey[400],
-                    fontSize: 16,
+                    fontSize: fontSizeManager.fontSize,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

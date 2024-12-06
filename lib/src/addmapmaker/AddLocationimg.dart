@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 
 import 'AddLocationfacName.dart';
+import '../../SingleTone/font.dart';
 
 
 class AddFacilityScreen extends StatelessWidget {
+  final fontSizeManager = FontSizeManager();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
           '추가하기',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.black, fontSize: fontSizeManager.fontSize),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
@@ -24,7 +26,7 @@ class AddFacilityScreen extends StatelessWidget {
             SizedBox(height: 40),
             Text(
               '시설물의 사진을\n업로드해 주세요',
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: fontSizeManager.fontSize + 2),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 20),
@@ -41,7 +43,7 @@ class AddFacilityScreen extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Text(
                   '(대충 사진 업로드 버튼)',
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: Colors.grey, fontSize: fontSizeManager.fontSize),
                 ),
               ),
             ),
@@ -57,7 +59,7 @@ class AddFacilityScreen extends StatelessWidget {
               },
               child: Text(
                 '다음',
-                style: TextStyle(color: Colors.green),
+                style: TextStyle(color: Colors.green, fontSize: fontSizeManager.fontSize),
               ),
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: Colors.green),

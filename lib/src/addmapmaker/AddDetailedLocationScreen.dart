@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'AddLocationFacType.dart';
+import '../../SingleTone/font.dart';
 
 class AddDetailedLocationScreen extends StatelessWidget {
   final TextEditingController _descriptionController = TextEditingController();
+  final fontSizeManager = FontSizeManager();
 
   @override
   Widget build(BuildContext context) {
@@ -12,11 +14,11 @@ class AddDetailedLocationScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
+        title: Text(
           '추가하기',
           style: TextStyle(
             color: Colors.black,
-            fontSize: 16,
+            fontSize: fontSizeManager.fontSize,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -28,10 +30,10 @@ class AddDetailedLocationScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            const Text(
+            Text(
               '시설물의 상세 위치를\n입력해 주세요',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: fontSizeManager.fontSize + 4,
                 fontWeight: FontWeight.w600,
                 height: 1.4,
               ),
@@ -43,7 +45,7 @@ class AddDetailedLocationScreen extends StatelessWidget {
                 hintText: '상세 위치',
                 hintStyle: TextStyle(
                   color: Colors.grey[400],
-                  fontSize: 16,
+                  fontSize: fontSizeManager.fontSize,
                 ),
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.grey[300]!),
@@ -59,7 +61,7 @@ class AddDetailedLocationScreen extends StatelessWidget {
               '(예 : 2층 복도)',
               style: TextStyle(
                 color: Colors.grey[500],
-                fontSize: 14,
+                fontSize: fontSizeManager.fontSize - 2,
               ),
             ),
             const Spacer(),
@@ -82,11 +84,11 @@ class AddDetailedLocationScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   '다음',
                   style: TextStyle(
-                    color: Color(0xFF2AAE66),
-                    fontSize: 16,
+                    color: const Color(0xFF2AAE66),
+                    fontSize: fontSizeManager.fontSize,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
