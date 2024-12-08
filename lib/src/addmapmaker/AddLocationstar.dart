@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'AddFacilityDescriptionScreen.dart';
-import '../../SingleTone/font.dart';
+import '/SingleTone/fontSizeManager.dart';
 
 class RateFacilityScreen extends StatefulWidget {
   const RateFacilityScreen({super.key});

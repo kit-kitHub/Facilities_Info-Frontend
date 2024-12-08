@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:facilities_info/src/Register/register.dart';
 import 'package:http/http.dart' as http;
 
-import '../../SingleTone/font.dart';
+import '/SingleTone/fontSizeManager.dart';
 
 
 class DuplicateCheckPage extends StatefulWidget {

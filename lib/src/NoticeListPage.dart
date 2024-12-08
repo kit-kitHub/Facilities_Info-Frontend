@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import '../SingleTone/font.dart';
-import '../article/article.dart';
+import '/SingleTone/fontSizeManager.dart';
+import '/article/article.dart';
 
 class NoticeListPage extends StatefulWidget {
   @override

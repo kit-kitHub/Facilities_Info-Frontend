@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'AddDetailedLocationScreen.dart';
-import '../../SingleTone/font.dart';
+import '/SingleTone/fontSizeManager.dart';
 
 class AddLocationfacNameScreen extends StatelessWidget {
   final TextEditingController Facname = TextEditingController();

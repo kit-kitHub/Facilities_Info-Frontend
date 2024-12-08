@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../SingleTone/font.dart';
+import '/SingleTone/fontSizeManager.dart';
 import 'DuplicateCheckPage.dart';
 
 class EmailSentPage extends StatelessWidget {
