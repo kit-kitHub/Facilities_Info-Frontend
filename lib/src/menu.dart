@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../screens/login_screen.dart';
 
 import 'package:facilities_info/src/menuSubPage/login.dart';
 import 'package:facilities_info/src/menuSubPage/Info.dart';

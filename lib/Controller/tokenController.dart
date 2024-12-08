@@ -20,14 +20,14 @@ class TokenController {
       final response = await http.post(
         Uri.parse("$apiBaseUrl/token/refresh"),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"refreshToken": refreshToken}),
+        body: jsonEncode({"RefreshToken": refreshToken}),
       );
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
 
-        String newAccessToken = responseData['accessToken'];
-        String newRefreshToken = responseData['refreshToken'] ?? refreshToken;
+        String newAccessToken = responseData['AccessToken'];
+        String newRefreshToken = responseData['RefreshToken'] ?? refreshToken;
 
         await tokenManager.setAccessToken(newAccessToken);
         await tokenManager.setRefreshToken(newRefreshToken);

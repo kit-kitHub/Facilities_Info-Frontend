@@ -18,22 +18,22 @@ class TokenManager {
 
   // AccessToken 설정 및 저장
   Future<void> setAccessToken(String token) async {
-    await _storage.write(key: 'accessToken', value: token);
+    await _storage.write(key: 'AccessToken', value: token);
   }
 
   // AccessToken 가져오기
   Future<String?> get accessToken async {
-    return await _storage.read(key: 'accessToken');
+    return await _storage.read(key: 'AccessToken');
   }
 
   // RefreshToken 설정 및 저장
   Future<void> setRefreshToken(String token) async {
-    await _storage.write(key: 'refreshToken', value: token);
+    await _storage.write(key: 'RefreshToken', value: token);
   }
 
   // RefreshToken 가져오기
   Future<String?> get refreshToken async {
-    return await _storage.read(key: 'refreshToken');
+    return await _storage.read(key: 'RefreshToken');
   }
 
   // 토큰 초기화

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:facilities_info/src/menuSubPage/registerSubPage/registerVerifyEmail.dart';
+
 import 'package:facilities_info/Controller/authController.dart';
 
 import 'package:facilities_info/SingleTone/fontSizeManager.dart';
@@ -43,16 +45,29 @@ class _RegisterPageState extends State<RegisterPage> {
       final result = await AuthController.checkEmail(email);
 
       if (result == "Available email") {
-        emailError = "사용 가능한 이메일 입니다.";
+        _sendVerificationEmail(email);
       } else if (result == "Email already in use") {
         emailError = "이미 사용 중인 이메일 입니다.";
+        return;
       }
     } catch (e) {
       emailError = "이메일 중복 확인 중 에러가 발생했습니다.";
       return;
     }
-
+  }
+  
+  void _sendVerificationEmail(String email) {
     // TODO : 인증 메일 발송 로직 추가
+    
+    
+    _navigateToNext(email);
+  }
+
+  void _navigateToNext(String email) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => RegisterVerifyEmailPage(email: email)),
+    );
   }
 
   @override

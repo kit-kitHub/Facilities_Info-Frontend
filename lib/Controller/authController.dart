@@ -24,7 +24,17 @@ class AuthController {
 
   static Future<String> checkNickname(String nickname) async {
     final response = await http.get(Uri.parse('$baseUrl/checknickname/$nickname'));
-    return response.body;
+
+    if (response.statusCode == 200) {
+      // 사용 가능한 닉네임
+      return "Available nickname";
+    } else if (response.statusCode == 409) {
+      // 이미 사용 중인 닉네임
+      return "Nickname already in use";
+    } else {
+      // 그 외의 에러 처리
+      throw Exception("이메일 확인 중 오류 발생: ${response.statusCode}");
+    }
   }
 
   static Future<String> registerLocalUser(User user) async {
@@ -33,7 +43,13 @@ class AuthController {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(user.toJson()),
     );
-    return response.body;
+
+    if (response.statusCode == 200) {
+      return "Register Finished";
+    } else {
+      // 그 외의 에러 처리
+      throw Exception("회원 가입 중 오류 발생: ${response.statusCode}");
+    }
   }
 
   static Future<String> registerOAuthUser(User user) async {

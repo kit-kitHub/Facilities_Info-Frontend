@@ -53,8 +53,8 @@ class _LoginPageState extends State<LoginPage> {
       final result = await AuthController.loginUser(email, password);
 
       if (result is Map<String, String>) {
-        tokenManager.setAccessToken(result['accessToken']!);
-        tokenManager.setRefreshToken(result['refreshToken']!);
+        tokenManager.setAccessToken(result['AccessToken']!);
+        tokenManager.setRefreshToken(result['RefreshToken']!);
         Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
       } else if (result == "Invalid password") {
         setState(() {
