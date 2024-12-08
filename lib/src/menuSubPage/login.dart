@@ -51,10 +51,15 @@ class _LoginPageState extends State<LoginPage> {
     try {
       final result = await AuthController.loginUser(email, password);
 
-      if (result is Map<String, String>) {
-        tokenManager.setAccessToken(result['AccessToken']!);
-        tokenManager.setRefreshToken(result['RefreshToken']!);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+      if (result is Map<String, String> && result['accessToken'] != null && result['refreshToken'] != null) {
+        tokenManager.setAccessToken(result['accessToken']!);
+        tokenManager.setRefreshToken(result['refreshToken']!);
+
+        Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen())
+        );
+
       } else if (result == "Invalid password") {
         setState(() {
           passwordError = "비밀번호가 일치하지 않습니다.";
@@ -63,6 +68,8 @@ class _LoginPageState extends State<LoginPage> {
         setState(() {
           emailError = "해당 이메일을 찾을 수 없습니다.";
         });
+      } else {
+        print("로그인 중 알 수 없는 오류 발생");
       }
     } catch (e) {
       print("로그인 중 오류 발생: $e");

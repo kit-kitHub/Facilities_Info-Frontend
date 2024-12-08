@@ -26,8 +26,8 @@ class TokenController {
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
 
-        String newAccessToken = responseData['AccessToken'];
-        String newRefreshToken = responseData['RefreshToken'] ?? refreshToken;
+        String newAccessToken = responseData['accessToken'];
+        String newRefreshToken = responseData['refreshToken'] ?? refreshToken;
 
         await tokenManager.setAccessToken(newAccessToken);
         await tokenManager.setRefreshToken(newRefreshToken);
