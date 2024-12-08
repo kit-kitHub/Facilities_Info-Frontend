@@ -11,7 +11,6 @@ import 'package:facilities_info/SingleTone/fontSizeManager.dart';
 import 'package:facilities_info/styles/color.dart';
 import 'package:facilities_info/widgets/fi_mainButton.dart';
 
-
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -90,115 +89,127 @@ class _LoginPageState extends State<LoginPage> {
           },
         ),
       ),
-
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 130),
-
-            Text(
-              "로그인",
-              style: TextStyle(
-                color: AppColors.fontPrimary,
-                fontSize: fontSizeManager.fontSize + 8, // 기본 크기 + 8
-                fontWeight: FontWeight.bold,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
               ),
-            ),
+              child: IntrinsicHeight(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 130),
 
-            SizedBox(height: 30),
-
-            TextField(
-              controller: emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                labelText: "이메일",
-                labelStyle: TextStyle(
-                  color: AppColors.fontTertiary,
-                  fontSize: fontSizeManager.fontSize, // 기본 폰트 크기 적용
-                ),
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.lineColor),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.mainColor),
-                ),
-                errorText: emailError,
-                errorStyle: TextStyle(
-                  color: AppColors.errorColor,
-                  fontSize: fontSizeManager.fontSize - 2, // 기본 크기 - 2
-                ),
-              ),
-            ),
-
-            SizedBox(height: 15),
-
-            TextField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: "비밀번호",
-                labelStyle: TextStyle(
-                  color: AppColors.fontTertiary,
-                  fontSize: fontSizeManager.fontSize, // 기본 폰트 크기 적용
-                ),
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.lineColor),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.mainColor),
-                ),
-                errorText: passwordError,
-                errorStyle: TextStyle(
-                  color: AppColors.errorColor,
-                  fontSize: fontSizeManager.fontSize - 2, // 기본 크기 - 2
-                ),
-              ),
-            ),
-
-            SizedBox(height: 10),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    // 비밀번호 찾기 페이지로 이동
-                  },
-                  child: Text(
-                    "비밀번호 찾기",
-                    style: TextStyle(
-                      color: AppColors.fontSecondary,
-                      fontSize: fontSizeManager.fontSize - 2, // 기본 크기 - 2
+                    Text(
+                      "로그인",
+                      style: TextStyle(
+                        color: AppColors.fontPrimary,
+                        fontSize: fontSizeManager.fontSize + 8, // 기본 크기 + 8
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: _navigateToRegister, // RegisterPage로 이동
-                  child: Text(
-                    "회원가입",
-                    style: TextStyle(
-                      color: AppColors.fontSecondary,
-                      fontSize: fontSizeManager.fontSize - 2, // 기본 크기 - 2
+
+                    SizedBox(height: 30),
+
+                    TextField(
+                      controller: emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        labelText: "이메일",
+                        labelStyle: TextStyle(
+                          color: AppColors.fontTertiary,
+                          fontSize: fontSizeManager.fontSize, // 기본 폰트 크기 적용
+                        ),
+                        border: UnderlineInputBorder(
+                          borderSide: BorderSide(color: AppColors.lineColor),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: AppColors.mainColor),
+                        ),
+                        errorText: emailError,
+                        errorStyle: TextStyle(
+                          color: AppColors.errorColor,
+                          fontSize: fontSizeManager.fontSize - 2, // 기본 크기 - 2
+                        ),
+                      ),
                     ),
-                  ),
+
+                    SizedBox(height: 15),
+
+                    TextField(
+                      controller: passwordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        labelText: "비밀번호",
+                        labelStyle: TextStyle(
+                          color: AppColors.fontTertiary,
+                          fontSize: fontSizeManager.fontSize, // 기본 폰트 크기 적용
+                        ),
+                        border: UnderlineInputBorder(
+                          borderSide: BorderSide(color: AppColors.lineColor),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: AppColors.mainColor),
+                        ),
+                        errorText: passwordError,
+                        errorStyle: TextStyle(
+                          color: AppColors.errorColor,
+                          fontSize: fontSizeManager.fontSize - 2, // 기본 크기 - 2
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 10),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            // 비밀번호 찾기 페이지로 이동
+                          },
+                          child: Text(
+                            "비밀번호 찾기",
+                            style: TextStyle(
+                              color: AppColors.fontSecondary,
+                              fontSize: fontSizeManager.fontSize - 2, // 기본 크기 - 2
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: _navigateToRegister, // RegisterPage로 이동
+                          child: Text(
+                            "회원가입",
+                            style: TextStyle(
+                              color: AppColors.fontSecondary,
+                              fontSize: fontSizeManager.fontSize - 2, // 기본 크기 - 2
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: 15),
+
+                    Spacer(),
+
+                    FI_MainButton(
+                      text: "로그인",
+                      onPressed: _login,
+                      backgroundColor: AppColors.mainColor, // Main Color
+                      textColor: Colors.white, // 텍스트 색상
+                    ),
+
+                    SizedBox(height: 20),
+                  ],
                 ),
-              ],
+              ),
             ),
-
-            Spacer(),
-
-            FI_MainButton(
-              text: "로그인",
-              onPressed: _login,
-              backgroundColor: AppColors.mainColor, // Main Color
-              textColor: Colors.white, // 텍스트 색상
-            ),
-
-            SizedBox(height: 20),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
