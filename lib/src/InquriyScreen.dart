@@ -5,8 +5,8 @@ import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:facilities_info/article/article.dart';
 
-import '../SingleTone/font.dart';
-import '../article/article_details_page.dart';
+import '/SingleTone/fontSizeManager.dart';
+import '/article/article_details_page.dart';
 
 class InquiryScreen extends StatefulWidget {
   @override
