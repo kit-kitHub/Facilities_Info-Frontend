@@ -4,6 +4,8 @@ import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:geolocator/geolocator.dart';
 import '/SingleTone/map_center.dart';
 
+import '/SingleTone/map_center.dart';//화면 이동해도 화면 남아있게 하기위해 사용하는 싱글톤
+
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -20,6 +22,7 @@ class _MainScreenState extends State<MapScreen> {
   bool isTracking = false;  // 추적 상태를 나타내는 변수
   StreamSubscription<Position>? positionStream;
   int level = 4;
+  bool isRunning = false;
   final mapcentermanager = mapCenterManager();
 
   //현재 위치를 움직이면 마커가 따라오게 해주는 함수
@@ -42,7 +45,7 @@ class _MainScreenState extends State<MapScreen> {
       mapcentermanager.mapCenterlatitude = position.latitude;
       mapcentermanager.mapCenterlongitude = position.longitude;
       // 지도 중심과 마커를 업데이트
-      updateMarker(currentPosition, '현재 위치');
+      updateMarker(currentPosition);
     });
   }
 
@@ -52,26 +55,36 @@ class _MainScreenState extends State<MapScreen> {
   }
 
   //마커 띄울때 사용하는 함수
-  void updateMarker(LatLng position, String infoText) {
+  void updateMarker(LatLng position) {
     setState(() {
       markers.clear();
       markers.add(
         Marker(
           markerId: UniqueKey().toString(),
           latLng: position,
-          infoWindowContent: infoText,    //위에 infoText로 넘어온 것들 마커 위에 표시해준다
-          infoWindowFirstShow: false,
-          infoWindowRemovable: true,
+        ),
+      );
+      mapController.setCenter(position);
+    });
+  }
+
+  //마커가 찍혀도 화면이 움직이지 않게 하기위한 함수
+  void updateMarker_not_center_move(LatLng position) {
+    setState(() {
+      markers.clear();
+      markers.add(
+        Marker(
+          markerId: UniqueKey().toString(),
+          latLng: position,
         ),
       );
     });
-    mapController.setCenter(position);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:  SafeArea(
+        body:  SafeArea(
           child: Stack(
             children: <Widget>[
               Container(
@@ -81,7 +94,7 @@ class _MainScreenState extends State<MapScreen> {
                   onMapCreated: (controller) async {
                     mapController = controller;
                     LatLng initialPosition = LatLng(mapcentermanager.mapCenterlatitude, mapcentermanager.mapCenterlongitude);
-                    updateMarker(initialPosition, 'Test');
+                    updateMarker(initialPosition);
                   },
                   markers: markers.toList(),
                   center: LatLng(mapcentermanager.mapCenterlatitude, mapcentermanager.mapCenterlongitude),
@@ -154,7 +167,39 @@ class _MainScreenState extends State<MapScreen> {
                           borderRadius: BorderRadius.circular(90),
                         ),
                         backgroundColor : Colors.white,
-                        onPressed: () {
+                        onPressed: () async {
+                          //추가하기 버튼이 이미 한번 눌렸던 상태였다면
+                          if (isRunning) {
+                            setState(() {
+                              isRunning = false;
+                              var moveLatLon = LatLng(mapcentermanager.mapCenterlatitude - 0.00125, mapcentermanager.mapCenterlongitude);
+                              mapController.panTo(moveLatLon);
+                              showModalBottomSheet(
+                                context: context,
+                                barrierColor: Colors.transparent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                ),
+                                builder: (context) {
+                                  return BottomSheetContent();
+                                },
+                              );
+                            });
+                          } 
+                          //아니면 무한반복으로 현재 화면 중간에 마커 생성
+                          else {
+                            setState(() {
+                              isRunning = true;
+                            });
+
+                            while (isRunning) {
+                              await Future.delayed(Duration(milliseconds: 10));
+                              LatLng center = await mapController.getCenter();
+                              mapcentermanager.mapCenterlongitude = center.longitude;
+                              mapcentermanager.mapCenterlatitude = center.latitude;
+                              updateMarker_not_center_move(center);
+                            }
+                          }
                         },
                         label: const Text('추가하기', style: TextStyle(color: Colors.black)),
                       ),
@@ -164,7 +209,56 @@ class _MainScreenState extends State<MapScreen> {
               ),
             ],
           ),
-      )
+        )
+    );
+  }
+}
+
+//사용자가 정보를 작성하는 칸
+class BottomSheetContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      height: 400,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TextField(
+            decoration: InputDecoration(
+              labelText: '해당 위치 이름을 작성해 주세요',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () {
+              // 이미지 추가 로직 구현
+            },
+            child: Text('이미지 추가하기'),
+          ),
+          SizedBox(height: 16),
+          TextField(
+            maxLines: 5,
+            decoration: InputDecoration(
+              labelText: '내용을 적어주세요',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          Spacer(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  // 제출 로직 구현
+                },
+                child: Text('제출하기'),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
