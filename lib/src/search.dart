@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '/SingleTone/font.dart';
+import '/SingleTone/fontSizeManager.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});

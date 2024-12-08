@@ -141,6 +141,7 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                     LatLng initialPosition = LatLng(mapcentermanager.mapCenterlatitude, mapcentermanager.mapCenterlongitude);
                     updateMarker(initialPosition);
                   },
+                  //현재 줌 레벨이 변경되면 level이 갱신되도록 설계
                   onZoomChangeCallback: (maplevel, context){
                     level = maplevel;
                   },
