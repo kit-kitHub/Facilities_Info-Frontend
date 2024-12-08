@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'AddLocationFacType.dart';
-import '../../SingleTone/font.dart';
+import '/SingleTone/fontSizeManager.dart';
 
 class AddDetailedLocationScreen extends StatelessWidget {
   final TextEditingController _descriptionController = TextEditingController();

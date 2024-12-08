@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'AddLocationstar.dart';
-import '../../SingleTone/font.dart';
+import '/SingleTone/fontSizeManager.dart';
 
 class SelectFacilityTypeScreen extends StatefulWidget {
   const SelectFacilityTypeScreen({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
-import '../../SingleTone/font.dart';
+import '/SingleTone/fontSizeManager.dart';
 import '../../SingleTone/map_center.dart';
 import 'AddLocationimg.dart';
 

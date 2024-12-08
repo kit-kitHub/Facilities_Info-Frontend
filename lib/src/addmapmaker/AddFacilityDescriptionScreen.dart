@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../main.dart';
-import '../../SingleTone/font.dart';
+import '/SingleTone/fontSizeManager.dart';
 
 
 class AddFacilityDescriptionScreen extends StatefulWidget {
