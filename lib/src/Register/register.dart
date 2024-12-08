@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '/src/home.dart';
+
 import '/SingleTone/fontSizeManager.dart';
-import '../../main.dart';
 import '../../models/user.dart';
 import '../../services/api_service.dart';
 

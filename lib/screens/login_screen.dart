@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../main.dart';
+
+import '/src/home.dart';
+
 import '../services/api_service.dart';
 import '../src/Register/emailverification.dart';
 import '../src/menu.dart';
