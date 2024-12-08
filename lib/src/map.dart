@@ -2,9 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-
-import '/SingleTone/map_center.dart';//화면 이동해도 화면 남아있게 하기위해 사용하는 싱글톤
 
 import '/SingleTone/map_center.dart';//화면 이동해도 화면 남아있게 하기위해 사용하는 싱글톤
 
@@ -16,7 +15,7 @@ class MapScreen extends StatefulWidget {
   State<MapScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MapScreen> {
+class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
   late KakaoMapController mapController;
   Set<Marker> markers = {}; // Marker variable
   String? latitude;
@@ -40,12 +39,12 @@ class _MainScreenState extends State<MapScreen> {
     positionStream = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
-        distanceFilter: 1, // 최소 이동 거리 (1미터)
+        distanceFilter: 1, // 최소 이동 거리 (5미터)
       ),
     ).listen((Position position) {
       LatLng currentPosition = LatLng(position.latitude, position.longitude);
-      mapcentermanager.mapCenterlatitude = position.latitude;
-      mapcentermanager.mapCenterlongitude = position.longitude;
+      mapcentermanager.setMapCenterLongitude(position.longitude);
+      mapcentermanager.setMapCenterLatitude(position.latitude);
       // 지도 중심과 마커를 업데이트
       updateMarker(currentPosition);
     });
@@ -81,6 +80,50 @@ class _MainScreenState extends State<MapScreen> {
         ),
       );
     });
+  }
+
+  void SingleToneclear() async{
+    await mapCenterManager().initialize();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this); // AppLifecycleState 감지 활성화
+    mapCenterManager().initialize(); // 싱글톤 초기화
+
+    _restoreLastPosition(); // 마지막 위치 복원
+  }
+
+  Future<void> _restoreLastPosition() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // SharedPreferences에서 저장된 위치 불러오기
+    double latitude = prefs.getDouble('last_latitude') ?? mapcentermanager.mapCenterlatitude;
+    double longitude = prefs.getDouble('last_longitude') ?? mapcentermanager.mapCenterlongitude;
+
+    // 지도 중심 위치 복원
+    LatLng lastPosition = LatLng(latitude, longitude);
+    mapController.setCenter(lastPosition);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
+      // 현재 지도 중심 좌표 가져오기
+      LatLng center = await mapController.getCenter();
+
+      // SharedPreferences에 저장
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setDouble('last_latitude', center.latitude);
+      await prefs.setDouble('last_longitude', center.longitude);
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this); // Observer 해제
+    super.dispose();
   }
 
   @override
@@ -218,8 +261,8 @@ class _MainScreenState extends State<MapScreen> {
                             while (isRunning) {
                               await Future.delayed(Duration(milliseconds: 10));
                               LatLng center = await mapController.getCenter();
-                              mapcentermanager.mapCenterlongitude = center.longitude;
-                              mapcentermanager.mapCenterlatitude = center.latitude;
+                              mapcentermanager.setMapCenterLongitude(center.longitude);
+                              mapcentermanager.setMapCenterLatitude(center.latitude);
                               updateMarker_not_center_move(center);
                             }
                           }
