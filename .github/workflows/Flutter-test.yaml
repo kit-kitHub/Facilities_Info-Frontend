@@ -43,7 +43,7 @@ jobs:
         run: flutter pub get
 
       - name: Build Android release APK
-        run: flutter build apk --release  # Android APK 빌드
+        run: flutter build apk --debug # Android APK 빌드
 
       - name: Build Android App Bundle
         run: flutter build appbundle --release  # Android AAB 빌드

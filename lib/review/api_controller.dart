@@ -1,12 +1,19 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiController {
-  static const String baseUrl = 'http://3.34.105.70:8080/api';
-  static const String accessToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJGYWNpbGl0aWVzLW1hcC1zZXJ2aWNlIiwiaWF0IjoxNzMzMjI3MDAyLCJleHAiOjE3MzMzMTM0MDIsInN1YiI6ImFzZEBhc2QiLCJpZCI6MSwic25zSWRPckVtYWlsIjoiYXNkQGFzZCIsInByb3ZpZGVyIjoibG9jYWwifQ.xhEYAMlW6vFII3dTM1TTdCynP-_eJvpIVipVi_7AzHI';
+  static const String baseUrl = 'http://192.168.0.6:8080/api';
+
+  // SharedPreferences에서 accessToken 가져오기
+  static Future<String?> _getAccessToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('accessToken');
+  }
 
   static Future<Map<String, dynamic>> getFacilityWithReviews(int facilityId) async {
+    final accessToken = await _getAccessToken();
     final url = '$baseUrl/facility/$facilityId';
     final response = await http.get(
       Uri.parse(url),
@@ -22,7 +29,9 @@ class ApiController {
     }
   }
 
-  static Future<http.Response> updateFacilityWithImages(int facilityId, String name, String address, String description, List<File> images) async {
+  static Future<http.Response> updateFacilityWithImages(
+      int facilityId, String name, String address, String description, List<File> images) async {
+    final accessToken = await _getAccessToken();
     final url = '$baseUrl/update/facility/info/$facilityId';
     final request = http.MultipartRequest('PUT', Uri.parse(url));
 
@@ -40,6 +49,7 @@ class ApiController {
   }
 
   static Future<http.Response> addReview(Map<String, dynamic> reviewData) async {
+    final accessToken = await _getAccessToken();
     final url = '$baseUrl/review/add';
     return await http.post(
       Uri.parse(url),
@@ -52,6 +62,7 @@ class ApiController {
   }
 
   static Future<http.Response> deleteReview(int reviewId) async {
+    final accessToken = await _getAccessToken();
     final url = '$baseUrl/review/delete/$reviewId';
     return await http.delete(
       Uri.parse(url),
@@ -62,6 +73,7 @@ class ApiController {
   }
 
   static Future<http.Response> updateReview(int reviewId, Map<String, dynamic> reviewData) async {
+    final accessToken = await _getAccessToken();
     final url = '$baseUrl/review/update/$reviewId';
     return await http.put(
       Uri.parse(url),
@@ -74,6 +86,7 @@ class ApiController {
   }
 
   static Future<http.Response> toggleLike(int reviewId) async {
+    final accessToken = await _getAccessToken();
     final url = '$baseUrl/review/$reviewId/like';
     return await http.put(
       Uri.parse(url),
