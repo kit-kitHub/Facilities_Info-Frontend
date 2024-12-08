@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiController {
-  static const String baseUrl = 'http://10.0.2.2:8080';
+  static const String baseUrl = 'http://3.34.105.70:8080';
 
   // Method to fetch the access token dynamically from SharedPreferences
   static Future<String?> _getAccessToken() async {
