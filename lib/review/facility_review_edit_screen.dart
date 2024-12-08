@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class FacilityReviewEditScreen extends StatefulWidget {
+import 'api_controller.dart';
+
+class   FacilityReviewEditScreen extends StatefulWidget {
   @override
   _FacilityReviewEditScreenState createState() =>
       _FacilityReviewEditScreenState();
@@ -10,6 +12,22 @@ class FacilityReviewEditScreen extends StatefulWidget {
 class _FacilityReviewEditScreenState extends State<FacilityReviewEditScreen> {
   final TextEditingController _commentController = TextEditingController();
   int _selectedRating = 0; // 선택된 별점 수
+
+  void _addReview(BuildContext context, int facilityId) async {
+    final reviewData = {
+      'facilityId': facilityId,
+      'reviewComment': _commentController.text,
+      'rating': _selectedRating,
+    };
+    final response = await ApiController.addReview(reviewData);
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Review added successfully')));
+      Navigator.popAndPushNamed(context, '/detail', arguments: facilityId);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to add review')));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,16 +80,8 @@ class _FacilityReviewEditScreenState extends State<FacilityReviewEditScreen> {
                   );
                   return;
                 }
-
-                final reviewData = {
-                  'facilityId': facilityId,
-                  'content': _commentController.text,
-                  'rating': _selectedRating,
-                  'date': DateFormat('yyyy/MM/dd').format(DateTime.now()),
-                  // 날짜 추가
-                };
-
-                Navigator.pop(context, reviewData); // 리뷰 데이터를 반환
+                _addReview(context, facilityId);
+                Navigator.pop(context);
               },
               child: Text('리뷰 제출'),
             ),
