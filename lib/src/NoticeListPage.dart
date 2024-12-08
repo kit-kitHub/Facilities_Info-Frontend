@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../SingleTone/font.dart';
 import '../article/article.dart';
 
 class NoticeListPage extends StatefulWidget {
@@ -12,6 +13,7 @@ class NoticeListPage extends StatefulWidget {
 class _NoticeListPageState extends State<NoticeListPage> {
   List<Article> notices = [];
   List<Article> faqs = [];
+  final fontSizeManager = FontSizeManager();
 
   @override
   void initState() {
@@ -41,7 +43,7 @@ class _NoticeListPageState extends State<NoticeListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('공지사항'),
+        title: Text('공지사항', style: TextStyle(fontSize: fontSizeManager.fontSize + 8)),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -54,7 +56,7 @@ class _NoticeListPageState extends State<NoticeListPage> {
           : ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          Text('공지사항', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          Text('공지사항', style: TextStyle(fontSize: fontSizeManager.fontSize + 8, fontWeight: FontWeight.bold)),
           ...notices.map((article) => _buildArticleTile(article)),
           SizedBox(height: 16),
         ],
@@ -64,7 +66,7 @@ class _NoticeListPageState extends State<NoticeListPage> {
 
   Widget _buildArticleTile(Article article) {
     return ListTile(
-      title: Text(article.title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+      title: Text(article.title, style: TextStyle(fontSize: fontSizeManager.fontSize + 2, fontWeight: FontWeight.w600)),
       onTap: () {
         Navigator.push(
           context,
@@ -79,6 +81,7 @@ class _NoticeListPageState extends State<NoticeListPage> {
 
 class NoticeDetailPage extends StatelessWidget {
   final Article article;
+  final fontSizeManager = FontSizeManager();
 
   NoticeDetailPage({required this.article});
 
@@ -86,7 +89,7 @@ class NoticeDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('공지사항 상세'),
+        title: Text('공지사항 상세', style: TextStyle(fontSize: fontSizeManager.fontSize + 8),),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -99,11 +102,11 @@ class NoticeDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(article.title, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            Text(article.title, style: TextStyle(fontSize: fontSizeManager.fontSize + 8, fontWeight: FontWeight.bold)),
             SizedBox(height: 16),
-            Text('ID: ${article.id}', style: TextStyle(fontSize: 16, color: Colors.grey)),
+            Text('ID: ${article.id}', style: TextStyle(fontSize: fontSizeManager.fontSize, color: Colors.grey)),
             SizedBox(height: 32),
-            Text('상세 내용은 추후 추가 예정입니다.', style: TextStyle(fontSize: 16)),
+            Text('상세 내용은 추후 추가 예정입니다.', style: TextStyle(fontSize: fontSizeManager.fontSize)),
           ],
         ),
       ),

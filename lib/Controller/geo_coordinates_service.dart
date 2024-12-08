@@ -50,7 +50,7 @@ class GeoCoordinates {
 }
 
 Future<List<GeoCoordinates>> fetchGeoCoordinates(double latitude, double longitude, double radius) async {
-  final uri = Uri.http('192.168.0.6:8080', 'api/geo-coordinates/within-radius', {
+  final uri = Uri.http('3.34.105.70:8080', 'api/geo-coordinates/within-radius', {
     'latitude': latitude.toString(),
     'longitude': longitude.toString(),
     'radius': radius.toString(),
@@ -77,7 +77,7 @@ Future<List<Facility>> searchFacilities({String? name}) async {
     if (name != null) 'name': name,
   };
 
-  final uri = Uri.http('192.168.0.6:8080', 'api/facilities/search', queryParameters);
+  final uri = Uri.http('3.34.105.70:8080', 'api/facilities/search', queryParameters);
 
   final response = await http.get(uri, headers: {'Content-Type': 'application/json; charset=UTF-8'});
 

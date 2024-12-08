@@ -5,6 +5,7 @@ import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:facilities_info/article/article.dart';
 
+import '../SingleTone/font.dart';
 import '../article/article_details_page.dart';
 
 class InquiryScreen extends StatefulWidget {
@@ -15,6 +16,7 @@ class InquiryScreen extends StatefulWidget {
 class _InquiryScreenState extends State<InquiryScreen> {
   String? selectedQuestionType;
   bool isMarketingConsentGiven = false;
+  final fontSizeManager = FontSizeManager();
   TextEditingController inquiryController = TextEditingController();
   List<Article> faqs = [];
 

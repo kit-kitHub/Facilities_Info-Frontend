@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../../SingleTone/font.dart';
 import '../../main.dart';
 import '../../models/user.dart';
-import '../../screens/login_screen.dart';
 import '../../services/api_service.dart';
 
 class CompleteRegistrationPage extends StatelessWidget {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController passwordcheckController = TextEditingController();
+  final fontSizeManager = FontSizeManager();
 
   final String email;
   final String nickname;
@@ -28,7 +29,7 @@ class CompleteRegistrationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('회원가입'),
+        title: Text('회원가입', style: TextStyle(fontSize: fontSizeManager.fontSize),),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -80,7 +81,7 @@ class CompleteRegistrationPage extends StatelessWidget {
 
                     if (password == passwordcheck) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('회원가입이 완료되었습니다!')),
+                        SnackBar(content: Text('회원가입이 완료되었습니다!', style: TextStyle(fontSize: fontSizeManager.fontSize),)),
                       );
                       _signup();
                       Navigator.push(
@@ -92,11 +93,11 @@ class CompleteRegistrationPage extends StatelessWidget {
                     }
                     else{
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('비밀번호를 다시 입력해 주세요')),
+                        SnackBar(content: Text('비밀번호를 다시 입력해 주세요', style: TextStyle(fontSize: fontSizeManager.fontSize),)),
                       );
                     }
                   },
-                  child: Text('회원가입 하기'),
+                  child: Text('회원가입 하기', style: TextStyle(fontSize: fontSizeManager.fontSize),),
                 ),
               ),
             ],

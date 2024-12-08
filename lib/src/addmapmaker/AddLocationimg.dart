@@ -1,11 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 import 'AddLocationfacName.dart';
 import '../../SingleTone/font.dart';
 
+class AddFacilityScreen extends StatefulWidget {
+  @override
+  _AddFacilityScreenState createState() => _AddFacilityScreenState();
+}
 
-class AddFacilityScreen extends StatelessWidget {
+class _AddFacilityScreenState extends State<AddFacilityScreen> {
   final fontSizeManager = FontSizeManager();
+  File? _selectedImage;
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,9 +50,7 @@ class AddFacilityScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
             GestureDetector(
-              onTap: () {
-                // 사진 업로드 로직 구현
-              },
+              onTap: _pickImage,
               child: Container(
                 height: 150,
                 decoration: BoxDecoration(
@@ -41,9 +58,19 @@ class AddFacilityScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 alignment: Alignment.center,
-                child: Text(
-                  '(대충 사진 업로드 버튼)',
-                  style: TextStyle(color: Colors.grey, fontSize: fontSizeManager.fontSize),
+                child: _selectedImage == null
+                    ? Text(
+                  '(사진 업로드 버튼)',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: fontSizeManager.fontSize,
+                  ),
+                )
+                    : Image.file(
+                  _selectedImage!,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
                 ),
               ),
             ),

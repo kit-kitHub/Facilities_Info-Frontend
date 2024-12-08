@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:facilities_info/src/Register/register.dart';
 import 'package:http/http.dart' as http;
 
+import '../../SingleTone/font.dart';
+
+
 class DuplicateCheckPage extends StatefulWidget {
   final String email;
   final String errorMessage;
@@ -15,6 +18,7 @@ class DuplicateCheckPage extends StatefulWidget {
 class _DuplicateCheckPage extends State<DuplicateCheckPage> {
   final TextEditingController nicknameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final fontSizeManager = FontSizeManager();
 
   String nickname = '';
 
@@ -26,7 +30,7 @@ class _DuplicateCheckPage extends State<DuplicateCheckPage> {
 
   Future<void> _checkNickname() async {
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8080/api/auth/checkNickname/${nicknameController.text.trim()}'),
+      Uri.parse('http://3.34.105.70:8080/api/auth/checkNickname/${nicknameController.text.trim()}'),
     );
     setState(() {
       if (response.statusCode == 200) {
@@ -43,7 +47,7 @@ class _DuplicateCheckPage extends State<DuplicateCheckPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('회원가입'),
+        title: Text('회원가입', style: TextStyle(fontSize: fontSizeManager.fontSize),),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

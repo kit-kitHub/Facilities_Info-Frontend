@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../SingleTone/font.dart';
 import 'DuplicateCheckPage.dart';
 
 class EmailSentPage extends StatelessWidget {
   final String email;
+  final fontSizeManager = FontSizeManager();
 
   EmailSentPage({required this.email});
 
