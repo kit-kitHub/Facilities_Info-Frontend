@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 
+import '/src/home.dart';
+
+
+
 import '../Controller/geo_coordinates_service.dart';
-import '../main.dart';
+
 import '/SingleTone/fontSizeManager.dart';
 import '/SingleTone/Recent_Search.dart';
 import 'map/geolocation.dart';

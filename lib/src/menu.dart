@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // SharedPreferences 사용
-import '../screens/login_screen.dart';
+
+import 'package:facilities_info/src/menuSubPage/login.dart';
+import 'package:facilities_info/src/menuSubPage/Info.dart';
+
 import '/SingleTone/fontSizeManager.dart';
+import '/SingleTone/tokenManager.dart';
+
 import 'InquriyScreen.dart';
 import 'NoticeListPage.dart';
-import 'Info.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({Key? key}) : super(key: key);
@@ -15,6 +18,7 @@ class MenuScreen extends StatefulWidget {
 
 class _MenuScreen extends State<MenuScreen> {
   final fontSizeManager = FontSizeManager(); // FontSizeManager 로드
+  final tokenManager = TokenManager(); // TokenManager 로드
   String? nickname; // 닉네임 변수
   bool isLoggedIn = false; // 로그인 상태 확인
 
@@ -25,23 +29,30 @@ class _MenuScreen extends State<MenuScreen> {
   }
 
   Future<void> _checkLoginStatus() async {
-    // SharedPreferences를 사용하여 로그인 상태 확인
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? storedNickname = prefs.getString('nickname');
-    String? token = prefs.getString('accessToken');
-
+    // TokenManager를 사용하여 로그인 상태 확인
+    String? token = await tokenManager.accessToken;
     setState(() {
-      nickname = storedNickname;
       isLoggedIn = token != null; // 토큰이 있으면 로그인 상태
     });
+
+    // 닉네임 가져오기 (필요 시 서버에서 닉네임 정보를 가져오는 로직 추가 가능)
+    if (isLoggedIn) {
+      // 예제: 토큰 디코딩을 통해 닉네임 추출
+      // String? decodedNickname = JwtDecoder.decode(token)['nickname'];
+      // setState(() {
+      //   nickname = decodedNickname ?? '사용자';
+      // });
+
+      // 현재는 닉네임을 기본값으로 설정
+      nickname = '사용자';
+    } else {
+      nickname = null;
+    }
   }
 
   Future<void> _logout() async {
-    // 로그아웃 처리: SharedPreferences에서 accessToken 제거
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('accessToken'); // 토큰 제거
-    await prefs.remove('nickname'); // 닉네임 제거
-
+    // 로그아웃 처리: TokenManager에서 토큰 제거
+    await tokenManager.clearTokens();
     setState(() {
       nickname = null;
       isLoggedIn = false;
@@ -148,7 +159,7 @@ class _MenuScreen extends State<MenuScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                      MaterialPageRoute(builder: (context) => LoginPage()),
                     ).then((value) {
                       _checkLoginStatus(); // 로그인 후 상태 업데이트
                     });

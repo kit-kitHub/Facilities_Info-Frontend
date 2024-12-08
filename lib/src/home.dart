@@ -4,19 +4,22 @@ import '/src/map.dart';
 import '/src/search.dart';
 import '/src/menu.dart';
 
+import '/src/RecentSearchScreen.dart';
+
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  _HomeScreen createState() => _HomeScreen();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreen extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
     const MapScreen() ,
-    const SearchScreen(),
+    RecentSearchScreen(),
     const MenuScreen(),
   ];
 
