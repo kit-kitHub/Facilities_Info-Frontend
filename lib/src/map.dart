@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:geolocator/geolocator.dart';
+import '/SingleTone/map_center.dart';
 
 import '/SingleTone/map_center.dart';//화면 이동해도 화면 남아있게 하기위해 사용하는 싱글톤
 
@@ -37,7 +38,7 @@ class _MainScreenState extends State<MapScreen> {
     positionStream = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
-        distanceFilter: 1, // 최소 이동 거리 (5미터)
+        distanceFilter: 1, // 최소 이동 거리 (1미터)
       ),
     ).listen((Position position) {
       LatLng currentPosition = LatLng(position.latitude, position.longitude);

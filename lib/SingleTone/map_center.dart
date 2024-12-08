@@ -10,18 +10,18 @@ class mapCenterManager {
   // 팩토리 생성자
   factory mapCenterManager() => _instance;
 
-  // 폰트 크기 기본값
+  // 기본 위치 좌표
   static const double _defaultmapCenterlatitude = 37.3608681;
   static const double _defaultmapCenterlongitude = 126.9306506;
 
   // SharedPreferences 인스턴스
   SharedPreferences? _prefs;
 
-  // 폰트 크기 상태 변수
+  // 위치 좌표 변수
   double _mapCenterlatitude = _defaultmapCenterlatitude;
   double _mapCenterlongitude = _defaultmapCenterlongitude;
 
-  // 초기화 (SharedPreferences 로드 및 폰트 크기 불러오기)
+  // 초기화 (SharedPreferences 로드 및 위치 좌표 불러오기)
   Future<void> initialize() async {
     _prefs = await SharedPreferences.getInstance();
     _mapCenterlatitude = _prefs?.getDouble('latitude') ?? _defaultmapCenterlatitude;
