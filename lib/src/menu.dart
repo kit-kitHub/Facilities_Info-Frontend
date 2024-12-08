@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import '../screens/login_screen.dart';
-import 'Info.dart';
+
+import 'package:facilities_info/src/menuSubPage/login.dart';
+import 'package:facilities_info/src/menuSubPage/Info.dart';
 
 import '/SingleTone/fontSizeManager.dart';
+
 import 'InquriyScreen.dart';
 import 'NoticeListPage.dart';
 
@@ -103,7 +106,8 @@ class _MenuScreen extends State<MenuScreen> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                    // MaterialPageRoute(builder: (context) => LoginScreen()),
+                    MaterialPageRoute(builder: (context) => LoginPage()),
                   );
                 },
                 style: OutlinedButton.styleFrom(

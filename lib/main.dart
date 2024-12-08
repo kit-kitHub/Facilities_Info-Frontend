@@ -7,7 +7,7 @@ import 'src/home.dart';
 import 'SingleTone/fontSizeManager.dart';
 import 'SingleTone/deviceInfo.dart';
 
-import 'theme/theme.dart';
+import 'package:facilities_info/styles/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
