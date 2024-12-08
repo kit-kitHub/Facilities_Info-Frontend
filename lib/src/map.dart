@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:geolocator/geolocator.dart';
-import '/SingleTone/map_center.dart';
+
+
+import '/SingleTone/map_center.dart';//화면 이동해도 화면 남아있게 하기위해 사용하는 싱글톤
 
 import '/SingleTone/map_center.dart';//화면 이동해도 화면 남아있게 하기위해 사용하는 싱글톤
 
@@ -96,10 +98,33 @@ class _MainScreenState extends State<MapScreen> {
                     LatLng initialPosition = LatLng(mapcentermanager.mapCenterlatitude, mapcentermanager.mapCenterlongitude);
                     updateMarker(initialPosition);
                   },
+                  //현재 줌 레벨이 변경되면 level이 갱신되도록 설계
+                  onZoomChangeCallback: (maplevel, context){
+                    level = maplevel;
+                  },
+                  zoomControl: false,
                   markers: markers.toList(),
                   center: LatLng(mapcentermanager.mapCenterlatitude, mapcentermanager.mapCenterlongitude),
                   onMarkerTap: (String markerId, LatLng position, int index) async{
-                  },
+                    showModalBottomSheet(
+                      context: context,
+                      backgroundColor: Colors.transparent,
+                      isScrollControlled: true, // 전체 화면 확장 가능
+                      builder: (BuildContext context) {
+                        return DraggableScrollableSheet(
+                          initialChildSize: 0.5, // 초기 크기: 화면의 절반
+                          minChildSize: 0.3, // 최소 크기
+                          maxChildSize: 0.9, // 최대 크기
+                          builder: (BuildContext context,
+                              ScrollController scrollController) {
+                            return DraggableSheet(
+                              scrollController: scrollController,
+                            );
+                          },
+                        );
+                      },
+                    );
+                    },
                 ),
               ),
               Positioned(
@@ -157,7 +182,7 @@ class _MainScreenState extends State<MapScreen> {
               ),
               Positioned(
                 bottom: 20,
-                right: 20,
+                left: 20,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -168,7 +193,6 @@ class _MainScreenState extends State<MapScreen> {
                         ),
                         backgroundColor : Colors.white,
                         onPressed: () async {
-                          //추가하기 버튼이 이미 한번 눌렸던 상태였다면
                           if (isRunning) {
                             setState(() {
                               isRunning = false;
@@ -181,12 +205,11 @@ class _MainScreenState extends State<MapScreen> {
                                   borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                                 ),
                                 builder: (context) {
-                                  return BottomSheetContent();
+                                  return BottomSheetContent_find();
                                 },
                               );
                             });
-                          } 
-                          //아니면 무한반복으로 현재 화면 중간에 마커 생성
+                          }
                           else {
                             setState(() {
                               isRunning = true;
@@ -207,15 +230,15 @@ class _MainScreenState extends State<MapScreen> {
                   ],
                 ),
               ),
-            ],
-          ),
-        )
+          ]
+        ),
+      ),
     );
   }
 }
 
 //사용자가 정보를 작성하는 칸
-class BottomSheetContent extends StatelessWidget {
+class BottomSheetContent_find extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -256,6 +279,119 @@ class BottomSheetContent extends StatelessWidget {
                 child: Text('제출하기'),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+//마커의 정보가 보여지는 칸
+class DraggableSheet extends StatelessWidget {
+  final ScrollController scrollController;
+
+  DraggableSheet({required this.scrollController});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(16),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.transparent,
+            blurRadius: 5,
+            offset: Offset(0, -3),
+          ),
+        ],
+      ),
+      child: ListView(
+        controller: scrollController,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '금오공과대학교 야외공연장',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '경상북도 구미시 거의동 472-1',
+                  style: TextStyle(color: Colors.grey[700]),
+                ),
+                SizedBox(height: 16),
+                Image.network(
+                  'https://via.placeholder.com/300', // 이미지 URL
+                  fit: BoxFit.cover,
+                ),
+                SizedBox(height: 16),
+                Text(
+                  '사용자가 작성한 간단한 설명',
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(height: 16),
+                Row(
+                  children: [
+                    Text(
+                      '5.0',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Icon(Icons.star, color: Colors.amber),
+                    Icon(Icons.star, color: Colors.amber),
+                    Icon(Icons.star, color: Colors.amber),
+                    Icon(Icons.star, color: Colors.amber),
+                    Icon(Icons.star, color: Colors.amber),
+                    SizedBox(width: 8),
+                    Text('리뷰 1개'),
+                  ],
+                ),
+                SizedBox(height: 16),
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: '리뷰 작성하기',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: Text('리뷰 제출하기'),
+                ),
+                SizedBox(height: 16),
+                Divider(),
+                ListTile(
+                  leading: CircleAvatar(),
+                  title: Text('사용자 이름1'),
+                  subtitle: Text('리뷰 내용'),
+                  trailing: Text('2024/11/06'),
+                ),
+                ListTile(
+                  leading: CircleAvatar(),
+                  title: Text('사용자 이름2'),
+                  subtitle: Text('리뷰 내용'),
+                  trailing: Text('2024/11/06'),
+                ),
+                ListTile(
+                  leading: CircleAvatar(),
+                  title: Text('사용자 이름3'),
+                  subtitle: Text('리뷰 내용'),
+                  trailing: Text('2024/11/06'),
+                ),
+              ],
+            ),
           ),
         ],
       ),
