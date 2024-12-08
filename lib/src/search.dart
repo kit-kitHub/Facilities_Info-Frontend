@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 
-import '/SingleTone/fontSizeManager.dart';
+import '../Controller/geo_coordinates_service.dart';
+import '../SingleTone/map_center.dart';
+import '../main.dart';
+import '/SingleTone/font.dart';
+import 'map/Locations.dart';
+import 'map/geolocation.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -9,49 +15,92 @@ class SearchScreen extends StatefulWidget {
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
+IconData getIconForType(String type) {
+  switch (type) {
+    case 'PARKING_LOT':
+      return Icons.local_parking;
+    case 'WELFARE_CENTER':
+      return Icons.volunteer_activism;
+    case 'MEDICAL_FACILITY':
+      return Icons.local_hospital;
+    case 'RESTROOM':
+      return Icons.wc;
+    default:
+      return Icons.location_on;
+  }
+}
+
 class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderStateMixin {
   final fontSizeManager = FontSizeManager();
   late TabController _tabController;
-  List<Map<String, dynamic>> menuItems = [];
-  List<Map<String, dynamic>> filteredItems = [];
+  List<GeoCoordinates> filteredItems = [];
+  List<GeoCoordinates> facilities = [];
+  String? searchName;
+  final LatLng initialPosition = LatLng(0, 0); // 초기 위치 추가
+  final mapcentermanager = mapCenterManager();
+
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
 
-    // Define menu items with categories
-    menuItems = [
-      {'icon': Icons.favorite, 'text': '양포동 영상복지센터', 'category': '복지센터', 'url': 'fsdfsd'},
-      {'icon': Icons.add, 'text': '서울필의원', 'category': '의료시설', 'url': 'fsdfsd'},
-      {'icon': Icons.favorite, 'text': '신동읍 영상복지센터', 'category': '복지센터', 'url': 'fsdfsd'},
-      {'icon': Icons.favorite, 'text': '구미시 장애인 종합 복지관', 'category': '복지센터', 'url': 'fsdfsd'},
-    ];
+    _initializeFacilities();
 
-    // Initialize to show all items (for the "전체" tab)
-    filteredItems = menuItems;
+    filteredItems = facilities;
 
     // Add listener to tab changes
     _tabController.addListener(() {
       setState(() {
         if (_tabController.index == 0) {
           // 전체 (All items)
-          filteredItems = menuItems;
+          filteredItems = facilities;
         } else if (_tabController.index == 1) {
           // 주차장
-          filteredItems = menuItems.where((item) => item['category'] == '주차장').toList();
+          filteredItems = facilities.where((item) => item.facility.type == 'PARKING_LOT').toList();
         } else if (_tabController.index == 2) {
           // 복지센터
-          filteredItems = menuItems.where((item) => item['category'] == '복지센터').toList();
+          filteredItems = facilities.where((item) => item.facility.type == 'WELFARE_CENTER').toList();
         } else if (_tabController.index == 3) {
           // 의료시설
-          filteredItems = menuItems.where((item) => item['category'] == '의료시설').toList();
+          filteredItems = facilities.where((item) => item.facility.type == 'MEDICAL_FACILITY').toList();
         } else if (_tabController.index == 4) {
           // 화장실
-          filteredItems = menuItems.where((item) => item['category'] == '화장실').toList();
+          filteredItems = facilities.where((item) => item.facility.type == 'RESTROOM').toList();
         }
       });
     });
+  }
+
+  void _initializeFacilities() async {
+    try {
+      LatLng center = LatLng(mapcentermanager.mapCenterlatitude, mapcentermanager.mapCenterlongitude);
+      List<GeoCoordinates> positionsList = await fetchGeoCoordinates(mapcentermanager.mapCenterlatitude, mapcentermanager.mapCenterlongitude, 10.0);
+
+      positionsList.sort((a, b) {
+        final double distanceA = LocationUtils.calculateDistance(
+          center.latitude,
+          center.longitude,
+          a.latitude,
+          a.longitude,
+        );
+        final double distanceB = LocationUtils.calculateDistance(
+          center.latitude,
+          center.longitude,
+          b.latitude,
+          b.longitude,
+        );
+        return distanceA.compareTo(distanceB); // 거리 기준 오름차순 정렬
+      });
+
+      // setState()를 UI 업데이트만 위해 사용
+      setState(() {
+        facilities = positionsList;
+        filteredItems = positionsList; // 초기 상태에서 필터링된 항목을 설정
+      });
+    } catch (e) {
+      print('Error loading facilities: $e');
+    }
   }
 
   @override
@@ -66,17 +115,11 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
       appBar: AppBar(
         leading: Icon(Icons.circle, color: Colors.white),
         title: GestureDetector(
-          onTap: () {
-            // Navigate to RecentSearchScreen when tapped
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => RecentSearchScreen()),
-            );
-          },
+          onTap: () {},
           child: AbsorbPointer(
             child: TextField(
               decoration: InputDecoration(
-                hintText: '검색 내용 작성칸',
+                hintText: '근처 정보 보기',
                 hintStyle: TextStyle(fontSize: fontSizeManager.fontSize - 4),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(vertical: 8.0),
@@ -117,10 +160,11 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
       body: ListView(
         children: filteredItems.map((item) {
           return MenuButton(
-            icon: item['icon'],
-            text: item['text'],
-            onPressurl: item['url'],
+            icon: getIconForType(item.facility.type),
+            text: item.facility.name,
+            onPressurl: item.facility.imageUrl,
             fontSizeManager: fontSizeManager,// Placeholder URL
+            position: LatLng(item.latitude, item.longitude),
           );
         }).toList(),
       ),
@@ -130,10 +174,11 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
 
 class MenuButton extends StatelessWidget {
   final IconData icon;
+  final LatLng position;
   final String text;
   final String onPressurl;
   final fontSizeManager;
-  const MenuButton({Key? key, required this.icon, required this.text, required this.onPressurl, required this.fontSizeManager}) : super(key: key);
+  const MenuButton({Key? key, required this.icon, required this.text, required this.onPressurl, required this.fontSizeManager, required this.position}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -141,113 +186,19 @@ class MenuButton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: TextButton(
         onPressed: () {
-          // Navigate or perform action based on onPressurl
+          mapcentermanager.setMapCenterLongitude(position.longitude);
+          mapcentermanager.setMapCenterLatitude(position.latitude);
+          mapcentermanager.setLevel(1);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
         },
         child: Row(
           children: [
             Icon(icon, size: 20, color: Colors.black54),
             SizedBox(width: 12),
             Text(text, style: TextStyle(color: Colors.black87, fontSize: fontSizeManager.fontSize - 4)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class RecentSearchScreen extends StatefulWidget {
-  @override
-  _RecentSearchScreenState createState() => _RecentSearchScreenState();
-}
-
-class _RecentSearchScreenState extends State<RecentSearchScreen> {
-  final List<Map<String, String>> recentSearches = [
-    {'name': '금오공과대학교', 'url': 'https://kumoh.ac.kr'},
-    {'name': '양포동 행정복지센터', 'url': 'https://yangpocity.kr'},
-    {'name': '거의동 병원', 'url': 'https://geoidonghospital.kr'},
-  ];
-  final fontSizeManager = FontSizeManager();
-  final TextEditingController _textEditingController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: TextField(
-          controller: _textEditingController,
-          textInputAction: TextInputAction.go,
-          onSubmitted: (value) async {
-            // Add entered value to recent searches list if it's not empty
-            if (value.isNotEmpty) {
-              setState(() {
-                recentSearches.insert(0, {'name': value, 'url' : 'fdsafas'}); // Insert at the beginning of the list
-              });
-              _textEditingController.clear(); // Clear the TextField after submission
-            }
-          },
-          decoration: InputDecoration(
-            hintText: '검색 내용 작성칸',
-            hintStyle: TextStyle(color: Colors.grey, fontSize: fontSizeManager.fontSize - 4),
-            border: InputBorder.none,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.mic),
-            onPressed: () {
-              // Handle microphone action
-            },
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('최근검색', style: TextStyle(fontSize: fontSizeManager.fontSize + 2, fontWeight: FontWeight.bold)),
-            Divider(),
-            Expanded(
-              child: ListView.builder(
-                itemCount: recentSearches.length,
-                itemBuilder: (context, index) {
-                  return Row(
-                    children: [
-                      Flexible(
-                        flex: 13,
-                        child: TextButton(
-                          onPressed: () {
-
-                          },
-                          child: Row(
-                            children: [
-                              Icon(Icons.search),
-                              SizedBox(width: 16),
-                              Text(recentSearches[index]['name']!, style: TextStyle(color: Colors.black87, fontSize: fontSizeManager.fontSize - 2)),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        flex: 2,
-                        child: IconButton(
-                          icon: Icon(Icons.close),
-                          onPressed: () {
-                            setState(() {
-                              recentSearches.removeAt(index); // Remove item from recent searches
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
           ],
         ),
       ),

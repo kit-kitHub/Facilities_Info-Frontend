@@ -32,10 +32,16 @@ dependencies:
   flutter:
     sdk: flutter
   kakao_map_plugin: ^0.3.2
+  
   geolocator: ^13.0.2
 
-  # 설정 저장 기능 구현을 위한 패키지
-  shared_preferences: ^2.0.0
+  shared_preferences: ^2.0.6
+
+  geocoding: ^2.0.0
+
+  http: ^0.13.3
+
+  image_picker: ^0.8.4+7
 
   # 디바이스 정보를 얻어오기 위한 패키지
   device_info_plus: ^10.0.0
@@ -48,7 +54,18 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_dotenv: ^5.2.1
 
+  flutter_html: ^3.0.0-beta.2
+
+  flutter_math_fork: ^0.7.2
+
+  flutter_layout_grid: ^2.0.7
+
+  #년/월/일 순서로 나오도록 만들 때 사용
+  intl: ^0.18.0
+
 dev_dependencies:
+  #메일 보내주는 기능
+  mailer: ^6.2.0
   flutter_test:
     sdk: flutter
 

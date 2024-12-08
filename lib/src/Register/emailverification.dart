@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
+import '../../services/api_service.dart';
 import 'EmailSentPage.dart';
 
 class EmailVerificationPage extends StatelessWidget {
-  // 이메일 입력을 위한 TextEditingController 추가
   final TextEditingController emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('회원가입', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-        centerTitle: true,
-        elevation: 0,
+        title: Text('회원가입'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -21,7 +19,7 @@ class EmailVerificationPage extends StatelessWidget {
             children: [
               SizedBox(height: 24),
               TextFormField(
-                controller: emailController, // 이메일 입력값을 이 컨트롤러에 저장
+                controller: emailController,
                 decoration: InputDecoration(
                   labelText: '이메일',
                   hintText: '이메일을 입력하세요',
@@ -37,20 +35,27 @@ class EmailVerificationPage extends StatelessWidget {
               SizedBox(height: 24),
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
-                    // 입력된 이메일 값을 가져옴
+                  onPressed: () async {
                     String email = emailController.text.trim();
 
                     if (email.isNotEmpty && email.contains('@')) {
-                      // 다음 페이지로 이메일 값을 전달
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EmailSentPage(email: email), // 전달
-                        ),
-                      );
+                      // API 호출로 이메일 중복 검사
+                      String response = await ApiService.checkEmail(email);
+
+                      if (response == 'true') { // 중복 이메일인 경우
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('이미 사용 중인 이메일입니다. 다른 이메일을 입력하세요.')),
+                        );
+                      } else {
+                        // 이메일이 사용 가능하면 다음 페이지로 이동
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EmailSentPage(email: email),
+                          ),
+                        );
+                      }
                     } else {
-                      // 이메일 유효성 검사 실패 시 메시지 표시
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('유효한 이메일을 입력하세요.')),
                       );

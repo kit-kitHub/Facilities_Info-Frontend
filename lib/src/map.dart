@@ -1,10 +1,15 @@
 import 'dart:async';
+import 'dart:math';
+import 'package:facilities_info/src/search.dart';
 import 'package:flutter/material.dart';
-import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
+import '../Controller/geo_coordinates_service.dart';
+import 'map/makerInfo.dart'; //마커 누르면 정보 보여주는 화면
+import 'map/userCreate.dart'; //추가하기 받아오기
+import 'map/Locations.dart'; //주위 정보 받아오기
 import '/SingleTone/map_center.dart';//화면 이동해도 화면 남아있게 하기위해 사용하는 싱글톤
 
 
@@ -17,60 +22,42 @@ class MapScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
   late KakaoMapController mapController;
+  StreamSubscription<Position>? positionStream;
   Set<Marker> markers = {}; // Marker variable
   String? latitude;
   String? longitude;
-  bool isTracking = false;  // 추적 상태를 나타내는 변수
-  StreamSubscription<Position>? positionStream;
-  int level = 4;
+  bool isTracking = false;
   bool isRunning = false;
+  int currentLevel = mapCenterManager().level;
   final mapcentermanager = mapCenterManager();
 
-  //현재 위치를 움직이면 마커가 따라오게 해주는 함수
-  void startTracking() async {
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    positionStream = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 1, // 최소 이동 거리 (5미터)
-      ),
-    ).listen((Position position) {
-      LatLng currentPosition = LatLng(position.latitude, position.longitude);
-      mapcentermanager.setMapCenterLongitude(position.longitude);
-      mapcentermanager.setMapCenterLatitude(position.latitude);
-      // 지도 중심과 마커를 업데이트
-      updateMarker(currentPosition);
-    });
-  }
-
-  // 위치 추적을 중지하는 함수
-  void stopTracking() {
-    positionStream?.cancel();  // 위치 추적 취소
-  }
-
   //마커 띄울때 사용하는 함수
-  void updateMarker(LatLng position) {
+  void updateMarker_Map_Info(LatLng position) {
     setState(() {
-      markers.clear();
       markers.add(
         Marker(
           markerId: UniqueKey().toString(),
           latLng: position,
         ),
       );
-      mapController.setCenter(position);
+    });
+  }
+
+  void updateMarker_Camera_Center_Move(LatLng position) {
+    setState(() {
+      markers.add(
+        Marker(
+          markerId: UniqueKey().toString(),
+          latLng: position,
+        ),
+      );
+      mapcentermanager.setMapCenterLongitude(position.longitude);
+      mapcentermanager.setMapCenterLatitude(position.latitude);
     });
   }
 
   //마커가 찍혀도 화면이 움직이지 않게 하기위한 함수
-  void updateMarker_not_center_move(LatLng position) {
+  void updateMarker_Use_Add(LatLng position) {
     setState(() {
       markers.clear();
       markers.add(
@@ -93,6 +80,18 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
     mapCenterManager().initialize(); // 싱글톤 초기화
 
     _restoreLastPosition(); // 마지막 위치 복원
+    _restoreCurrentLevel(); // 마지막 레벨 복원
+  }
+
+  Future<void> _saveCurrentLevel() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('map_level', currentLevel);
+  }
+
+  Future<void> _restoreCurrentLevel() async {
+    final prefs = await SharedPreferences.getInstance();
+    currentLevel = prefs.getInt('map_level') ?? mapCenterManager().level;
+    mapController.setLevel(currentLevel); // 복원된 레벨 적용
   }
 
   Future<void> _restoreLastPosition() async {
@@ -117,6 +116,8 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
       final prefs = await SharedPreferences.getInstance();
       await prefs.setDouble('last_latitude', center.latitude);
       await prefs.setDouble('last_longitude', center.longitude);
+
+      await _saveCurrentLevel(); // 레벨 저장
     }
   }
 
@@ -124,6 +125,33 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
   void dispose() {
     WidgetsBinding.instance.removeObserver(this); // Observer 해제
     super.dispose();
+  }
+
+  void startTracking() async {
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    positionStream = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 1,
+      ),
+    ).listen((Position position) {
+      mapcentermanager.setMapCenterLongitude(position.longitude);
+      mapcentermanager.setMapCenterLatitude(position.latitude);
+      mapController.setCenter(LatLng(mapcentermanager.mapCenterlatitude, mapcentermanager.mapCenterlongitude));
+    });
+  }
+
+// 위치 추적을 중지하는 함수
+  void stopTracking() {
+    positionStream?.cancel();  // 위치 추적 취소
   }
 
   @override
@@ -138,36 +166,85 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                 child: KakaoMap(
                   onMapCreated: (controller) async {
                     mapController = controller;
-                    LatLng initialPosition = LatLng(mapcentermanager.mapCenterlatitude, mapcentermanager.mapCenterlongitude);
-                    updateMarker(initialPosition);
-                  },
-                  //현재 줌 레벨이 변경되면 level이 갱신되도록 설계
-                  onZoomChangeCallback: (maplevel, context){
-                    level = maplevel;
-                  },
-                  zoomControl: false,
-                  markers: markers.toList(),
-                  center: LatLng(mapcentermanager.mapCenterlatitude, mapcentermanager.mapCenterlongitude),
-                  onMarkerTap: (String markerId, LatLng position, int index) async{
-                    showModalBottomSheet(
-                      context: context,
-                      backgroundColor: Colors.transparent,
-                      isScrollControlled: true, // 전체 화면 확장 가능
-                      builder: (BuildContext context) {
-                        return DraggableScrollableSheet(
-                          initialChildSize: 0.5, // 초기 크기: 화면의 절반
-                          minChildSize: 0.3, // 최소 크기
-                          maxChildSize: 0.9, // 최대 크기
-                          builder: (BuildContext context,
-                              ScrollController scrollController) {
-                            return DraggableSheet(
-                              scrollController: scrollController,
-                            );
-                          },
-                        );
-                      },
-                    );
+                    List<GeoCoordinates> positionsList = await fetchGeoCoordinates(36.1465, 128.3935, 10);
+                    controller.setLevel(mapcentermanager.level);
+                    for (var position in positionsList) {
+                      LatLng newPosition = LatLng(position.latitude, position.longitude);
+                      print('Latitude: ${position.latitude}, Longitude: ${position.longitude}');
+                      updateMarker_Map_Info(newPosition);
+                      }
                     },
+                    markers: markers.toList(),
+                  onZoomChangeCallback: (maplevel, context){
+                    //zoomlevel저장
+                    currentLevel = maplevel;
+                    mapcentermanager.setLevel(maplevel);
+                  },
+                  clusterer: Clusterer(
+                    markers: markers.toList(),
+                    minLevel: 10,
+                    averageCenter: true,
+                  ),
+                  zoomControl: false,
+                  onCameraIdle: (LatLng postions, int maplevel){
+                    mapcentermanager.setMapCenterLongitude(postions.longitude);
+                    mapcentermanager.setMapCenterLatitude(postions.latitude);
+                    //현재 level정보 저장
+                    currentLevel = maplevel;
+                    mapcentermanager.setLevel(maplevel);
+                  },
+                  center: LatLng(mapcentermanager.mapCenterlatitude, mapcentermanager.mapCenterlongitude),
+                    onMarkerTap: (String markerId, LatLng position, int index1) async {
+                      // 위치 정보 가져오기
+                      List<GeoCoordinates> positionsList = await fetchGeoCoordinates(mapcentermanager.mapCenterlatitude, mapcentermanager.mapCenterlongitude, 10000.0);
+
+                      // 해당 마커의 위치 찾기
+                      final int index = positionsList.indexWhere((positions) {
+                        // 소수점 4자리까지 반올림하여 비교
+                        double lat1 = (positions.latitude * pow(10  , 4)).roundToDouble() / pow(10, 4);
+                        double lon1 = (positions.longitude * pow(10, 4)).roundToDouble() / pow(10, 4);
+                        double lat2 = (position.latitude * pow(10, 4)).roundToDouble() / pow(10, 4);
+                        double lon2 = (position.longitude * pow(10, 4)).roundToDouble() / pow(10, 4);
+
+                        return lat1 == lat2 && lon1 == lon2;
+                      });
+                      if (index == -1) return; // 위치를 찾지 못한 경우 처리
+
+                      final GeoCoordinates foundPosition = positionsList[index];
+
+                      // 화면 갱신 후 모달 표시 (지연을 추가)
+                      mapController.setCenter(position);
+
+                      //화면 확대 해서 보여주기
+                      mapController.setLevel(1);
+
+                      // 화면이 갱신될 시간을 주기 위해 잠시 딜레이
+                      await Future.delayed(Duration(milliseconds: 300));
+
+                      // 모달 바텀 시트 표시
+                      showModalBottomSheet(
+                        context: context,
+                        backgroundColor: Colors.transparent,
+                        isScrollControlled: true, // 전체 화면 확장 가능
+                        builder: (BuildContext context) {
+                          return DraggableScrollableSheet(
+                            initialChildSize: 0.5, // 초기 크기: 화면의 절반
+                            minChildSize: 0.3, // 최소 크기
+                            maxChildSize: 0.9, // 최대 크기
+                            builder: (BuildContext context, ScrollController scrollController) {
+                              return DraggableSheet(
+                                scrollController: scrollController,
+                                title: foundPosition.facility.name,
+                                address: foundPosition.facility.address,
+                                imageUrl: foundPosition.facility.imageUrl,
+                                description: foundPosition.facility.address,
+                                rating: foundPosition.facility.rating.toInt(),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    }
                 ),
               ),
               Positioned(
@@ -183,17 +260,19 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                       backgroundColor: Colors.white,
                       onPressed: () {
                         setState(() {
-                          if (isTracking) {
-                            stopTracking();  // 이미 추적 중이면 멈추기
-                          } else {
-                            startTracking();  // 추적 시작
-                          }
-                          isTracking = !isTracking;  // 추적 상태 토글
+                          isTracking = !isTracking; // 상태를 먼저 토글
                         });
+
+                        // 상태에 맞춰 추적 시작 또는 중지
+                        if (isTracking) {
+                          startTracking(); // 추적 시작
+                        } else {
+                          stopTracking();  // 추적 중지
+                        }
                       },
                       child: Icon(
                         Icons.my_location,
-                        color: isTracking ? Colors.blue : Colors.black87 , // 상태에 따라 색상 변경
+                        color: isTracking ? Colors.blue : Colors.black87, // 상태에 따라 색상 변경
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -203,8 +282,11 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                       ),
                       backgroundColor: Colors.white,
                       onPressed: () async {
-                        level = level - 1;
-                        mapController.setLevel(level);
+                        setState(() {
+                          currentLevel = currentLevel - 1;
+                        });
+                        mapController.setLevel(currentLevel);
+                        _saveCurrentLevel(); // 변경된 레벨 저장
                       },
                       child: const Icon(Icons.add),
                     ),
@@ -215,8 +297,12 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                       ),
                       backgroundColor: Colors.white,
                       onPressed: () async {
-                        level = level + 1;
-                        mapController.setLevel(level);
+                        setState(() {
+                        currentLevel = currentLevel + 1;
+                        });
+
+                        mapController.setLevel(currentLevel);
+                        _saveCurrentLevel(); // 변경된 레벨 저장
                       },
                       child: const Icon(Icons.remove),
                     ),
@@ -263,7 +349,7 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                               LatLng center = await mapController.getCenter();
                               mapcentermanager.setMapCenterLongitude(center.longitude);
                               mapcentermanager.setMapCenterLatitude(center.latitude);
-                              updateMarker_not_center_move(center);
+                              updateMarker_Use_Add(center);
                             }
                           }
                         },
@@ -273,170 +359,51 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                   ],
                 ),
               ),
-          ]
-        ),
-      ),
-    );
-  }
-}
-
-//사용자가 정보를 작성하는 칸
-class BottomSheetContent_find extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      height: 400,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          TextField(
-            decoration: InputDecoration(
-              labelText: '해당 위치 이름을 작성해 주세요',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {
-              // 이미지 추가 로직 구현
-            },
-            child: Text('이미지 추가하기'),
-          ),
-          SizedBox(height: 16),
-          TextField(
-            maxLines: 5,
-            decoration: InputDecoration(
-              labelText: '내용을 적어주세요',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          Spacer(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  // 제출 로직 구현
-                },
-                child: Text('제출하기'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-//마커의 정보가 보여지는 칸
-class DraggableSheet extends StatelessWidget {
-  final ScrollController scrollController;
-
-  DraggableSheet({required this.scrollController});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(16),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.transparent,
-            blurRadius: 5,
-            offset: Offset(0, -3),
-          ),
-        ],
-      ),
-      child: ListView(
-        controller: scrollController,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '금오공과대학교 야외공연장',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '경상북도 구미시 거의동 472-1',
-                  style: TextStyle(color: Colors.grey[700]),
-                ),
-                SizedBox(height: 16),
-                Image.network(
-                  'https://via.placeholder.com/300', // 이미지 URL
-                  fit: BoxFit.cover,
-                ),
-                SizedBox(height: 16),
-                Text(
-                  '사용자가 작성한 간단한 설명',
-                  style: TextStyle(fontSize: 16),
-                ),
-                SizedBox(height: 16),
-                Row(
+              Positioned(
+                bottom: 20,
+                right: 20,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text(
-                      '5.0',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                    SizedBox(
+                      child: FloatingActionButton.extended(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(90),
+                        ),
+                        backgroundColor : Colors.white,
+                        onPressed: () async {
+                          LatLng center = await mapController.getCenter();
+                          List<GeoCoordinates> positionsList = await fetchGeoCoordinates(36.1466, 128.3944, 10);
+                          positionsList.sort((a, b) {
+                            final double distanceA = LocationUtils.calculateDistance(
+                              center.latitude,
+                              center.longitude,
+                              a.latitude,
+                              a.longitude,
+                            );
+                            final double distanceB = LocationUtils.calculateDistance(
+                              center.latitude,
+                              center.longitude,
+                              b.latitude,
+                              b.longitude,
+                            );
+                            return distanceA.compareTo(distanceB); // 거리 기준 오름차순 정렬
+                          });
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SearchScreen(),
+                            ),
+                          );
+                        },
+                        label: const Text('정보보기', style: TextStyle(color: Colors.black)),
                       ),
                     ),
-                    SizedBox(width: 8),
-                    Icon(Icons.star, color: Colors.amber),
-                    Icon(Icons.star, color: Colors.amber),
-                    Icon(Icons.star, color: Colors.amber),
-                    Icon(Icons.star, color: Colors.amber),
-                    Icon(Icons.star, color: Colors.amber),
-                    SizedBox(width: 8),
-                    Text('리뷰 1개'),
                   ],
                 ),
-                SizedBox(height: 16),
-                TextField(
-                  decoration: InputDecoration(
-                    labelText: '리뷰 작성하기',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: Text('리뷰 제출하기'),
-                ),
-                SizedBox(height: 16),
-                Divider(),
-                ListTile(
-                  leading: CircleAvatar(),
-                  title: Text('사용자 이름1'),
-                  subtitle: Text('리뷰 내용'),
-                  trailing: Text('2024/11/06'),
-                ),
-                ListTile(
-                  leading: CircleAvatar(),
-                  title: Text('사용자 이름2'),
-                  subtitle: Text('리뷰 내용'),
-                  trailing: Text('2024/11/06'),
-                ),
-                ListTile(
-                  leading: CircleAvatar(),
-                  title: Text('사용자 이름3'),
-                  subtitle: Text('리뷰 내용'),
-                  trailing: Text('2024/11/06'),
-                ),
-              ],
-            ),
-          ),
-        ],
+              ),
+          ]
+        ),
       ),
     );
   }

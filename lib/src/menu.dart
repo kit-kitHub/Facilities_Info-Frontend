@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'menuSubPage/Info.dart';
+import '../screens/login_screen.dart';
+import 'Info.dart';
 
-import '/SingleTone/fontSizeManager.dart';
+import '/SingleTone/font.dart';
+import 'InquriyScreen.dart';
+import 'NoticeListPage.dart';
 
 
 class MenuScreen extends StatefulWidget {
@@ -27,15 +30,15 @@ class _MenuScreen extends State<MenuScreen> {
             icon: Icon(Icons.text_decrease),
             onPressed: () { setState(() { fontSizeManager.decreaseFontSize(); }); },
           ),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(vertical: 16.0),
-          //   child: Center(
-          //     child: Text(
-          //       fontSizeManager.fontSize.toStringAsFixed(0),
-          //       style: TextStyle(fontSize: fontSizeManager.fontSize),
-          //     ),
-          //   ),
-          // ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Center(
+              child: Text(
+                fontSizeManager.fontSize.toStringAsFixed(0),
+                style: TextStyle(fontSize: fontSizeManager.fontSize),
+              ),
+            ),
+          ),
           IconButton(
             icon: Icon(Icons.text_increase),
             onPressed: () { setState(() { fontSizeManager.increaseFontSize(); }); },
@@ -97,7 +100,12 @@ class _MenuScreen extends State<MenuScreen> {
               const SizedBox(height: 16),
               // Login Button
               OutlinedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                  );
+                },
                 style: OutlinedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
@@ -117,13 +125,13 @@ class _MenuScreen extends State<MenuScreen> {
               // Menu Items
               _buildMenuItem(Icons.notifications_none_outlined, '공지사항',
                     () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => InfoScreen()),
+                  MaterialPageRoute(builder: (context) => NoticeListPage()),
                 ),
               ),
               const Divider(height: 1),
               _buildMenuItem(Icons.chat_bubble_outline, '문의하기',
                     () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => InfoScreen()),
+                  MaterialPageRoute(builder: (context) => InquiryScreen()),
                 ),),
               const Divider(height: 1),
               _buildMenuItem(Icons.info_outline, '정보',
