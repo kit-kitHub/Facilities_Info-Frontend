@@ -6,6 +6,8 @@ import 'package:geolocator/geolocator.dart';
 
 import '/SingleTone/map_center.dart';//화면 이동해도 화면 남아있게 하기위해 사용하는 싱글톤
 
+import '/SingleTone/map_center.dart';//화면 이동해도 화면 남아있게 하기위해 사용하는 싱글톤
+
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});

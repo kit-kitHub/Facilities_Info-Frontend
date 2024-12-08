@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'Info.dart';
+import 'menuSubPage/Info.dart';
 
-import '/SingleTone/font.dart';
+import '/SingleTone/fontSizeManager.dart';
 
 
 class MenuScreen extends StatefulWidget {
@@ -27,15 +27,15 @@ class _MenuScreen extends State<MenuScreen> {
             icon: Icon(Icons.text_decrease),
             onPressed: () { setState(() { fontSizeManager.decreaseFontSize(); }); },
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Center(
-              child: Text(
-                fontSizeManager.fontSize.toStringAsFixed(0),
-                style: TextStyle(fontSize: fontSizeManager.fontSize),
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(vertical: 16.0),
+          //   child: Center(
+          //     child: Text(
+          //       fontSizeManager.fontSize.toStringAsFixed(0),
+          //       style: TextStyle(fontSize: fontSizeManager.fontSize),
+          //     ),
+          //   ),
+          // ),
           IconButton(
             icon: Icon(Icons.text_increase),
             onPressed: () { setState(() { fontSizeManager.increaseFontSize(); }); },
