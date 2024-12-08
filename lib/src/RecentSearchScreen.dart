@@ -3,7 +3,7 @@ import 'package:collection/collection.dart'; // firstWhereOrNull 사용 시 필�
 
 import '../Controller/geo_coordinates_service.dart';
 import '../main.dart';
-import '/SingleTone/font.dart';
+import '/SingleTone/fontSizeManager.dart';
 import '/SingleTone/Recent_Search.dart';
 import 'map/geolocation.dart';
 

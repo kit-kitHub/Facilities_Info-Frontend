@@ -7,7 +7,7 @@ import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'src/map.dart';
 import 'src/menu.dart';
 
-import 'SingleTone/font.dart';
+import 'SingleTone/fontSizeManager.dart';
 
 
 void main() async {

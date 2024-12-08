@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../screens/login_screen.dart';
 import 'Info.dart';
 
-import '/SingleTone/font.dart';
+import '/SingleTone/fontSizeManager.dart';
 import 'InquriyScreen.dart';
 import 'NoticeListPage.dart';
 

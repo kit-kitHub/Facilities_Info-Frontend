@@ -4,7 +4,7 @@ import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import '../Controller/geo_coordinates_service.dart';
 import '../SingleTone/map_center.dart';
 import '../main.dart';
-import '/SingleTone/font.dart';
+import '/SingleTone/fontSizeManager.dart';
 import 'map/Locations.dart';
 import 'map/geolocation.dart';
 
