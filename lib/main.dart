@@ -10,6 +10,7 @@ import 'src/menu.dart';
 import 'SingleTone/fontSizeManager.dart';
 
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
