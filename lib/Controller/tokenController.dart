@@ -6,8 +6,8 @@ import 'package:facilities_info/SingleTone/tokenManager.dart';
 import 'package:facilities_info/tools/jwt_decoder.dart';
 
 
-class AuthController {
-  final String apiBaseUrl = "https://example.com/api";
+class TokenController {
+  final String apiBaseUrl = "http://3.34.105.70:8080/api/auth"; // TODO : API 경로 맞게 설정
   final TokenManager tokenManager = TokenManager();
 
   /// 토큰 갱신 메서드
