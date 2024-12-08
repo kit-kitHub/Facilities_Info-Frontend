@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:io';
 
 class ApiController {
-  static const String baseUrl = 'http://10.0.2.2:8080/api';
+  static const String baseUrl = 'http://3.34.105.70:8080/api';
   static const String accessToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJGYWNpbGl0aWVzLW1hcC1zZXJ2aWNlIiwiaWF0IjoxNzMzMjI3MDAyLCJleHAiOjE3MzMzMTM0MDIsInN1YiI6ImFzZEBhc2QiLCJpZCI6MSwic25zSWRPckVtYWlsIjoiYXNkQGFzZCIsInByb3ZpZGVyIjoibG9jYWwifQ.xhEYAMlW6vFII3dTM1TTdCynP-_eJvpIVipVi_7AzHI';
 
   static Future<Map<String, dynamic>> getFacilityWithReviews(int facilityId) async {

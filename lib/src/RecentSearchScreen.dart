@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:collection/collection.dart'; // firstWhereOrNull 사용 시 필요
+import 'package:collection/collection.dart';
 
 import '../Controller/geo_coordinates_service.dart';
 import '../main.dart';

@@ -39,7 +39,7 @@ Future<List<Facility>> searchFacilities({String? name, String? type}) async {
     if (type != null) 'type': type,
   };
 
-  final uri = Uri.http('192.168.0.6:8080', 'api/facilities/search', queryParameters);
+  final uri = Uri.http('3.34.105.70:8080', 'api/facilities/search', queryParameters);
 
   final response = await http.get(uri, headers: {'Content-Type': 'application/json; charset=UTF-8'});
 

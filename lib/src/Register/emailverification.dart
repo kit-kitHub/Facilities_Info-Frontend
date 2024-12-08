@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../SingleTone/font.dart';
 import 'EmailSentPage.dart';
 import 'package:http/http.dart' as http;
 
@@ -10,9 +11,10 @@ class EmailVerificationPage extends StatefulWidget {
 class _EmailVerificationPage extends State<EmailVerificationPage> {
   final TextEditingController emailController = TextEditingController();
   String emailMessage = '';
+  final fontSizeManager = FontSizeManager();
 
   Future<void> _checkEmail() async {
-    final response = await http.get(Uri.parse('http://10.0.2.2:8080/api/auth/checkEmail/${emailController.text}'));
+    final response = await http.get(Uri.parse('http://3.34.105.70:8080/api/auth/checkEmail/${emailController.text}'));
     setState(() {
       if (response.statusCode == 200) {
         emailMessage = '사용 가능한 이메일입니다.';
@@ -28,7 +30,7 @@ class _EmailVerificationPage extends State<EmailVerificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('회원가입'),
+        title: Text('회원가입', style: TextStyle(fontSize: fontSizeManager.fontSize),),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -50,6 +52,7 @@ class _EmailVerificationPage extends State<EmailVerificationPage> {
               Text(
                 '회원가입을 위해 이메일 인증이 필요합니다. 아래 버튼을 눌러 확인을 완료해 주세요.',
                 textAlign: TextAlign.center,
+                style: TextStyle(fontSize: fontSizeManager.fontSize),
               ),
               SizedBox(height: 24),
               Center(
@@ -66,11 +69,11 @@ class _EmailVerificationPage extends State<EmailVerificationPage> {
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('유효한 이메일을 입력하세요.')),
+                        SnackBar(content: Text('유효한 이메일을 입력하세요.', style: TextStyle(fontSize: fontSizeManager.fontSize),)),
                       );
                     }
                   },
-                  child: Text('계속하기'),
+                  child: Text('계속하기', style: TextStyle(fontSize: fontSizeManager.fontSize),),
                 ),
               ),
             ],
