@@ -47,11 +47,15 @@ class _RegisterPageState extends State<RegisterPage> {
       if (result == "Available email") {
         _sendVerificationEmail(email);
       } else if (result == "Email already in use") {
-        emailError = "이미 사용 중인 이메일 입니다.";
+        setState(() {
+          emailError = "이미 사용 중인 이메일 입니다.";
+        });
         return;
       }
     } catch (e) {
-      emailError = "이메일 중복 확인 중 에러가 발생했습니다.";
+      setState(() {
+        emailError = "이메일 중복 확인 중 에러가 발생했습니다.";
+      });
       return;
     }
   }

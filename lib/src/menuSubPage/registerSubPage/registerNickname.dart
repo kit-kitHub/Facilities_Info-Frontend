@@ -44,11 +44,15 @@ class _RegisterNicknamePageState extends State<RegisterNicknamePage> {
       if (result == "Available nickname") {
         _navigateToNext(nickname);
       } else if (result == "Nickname already in use") {
-        nicknameError = "이미 사용 중인 닉네임 입니다.";
+        setState(() {
+          nicknameError = "이미 사용 중인 닉네임 입니다.";
+        });
         return;
       }
     } catch (e) {
-      nicknameError = "닉네임 중복 확인 중 에러가 발생했습니다.";
+      setState(() {
+        nicknameError = "닉네임 중복 확인 중 에러가 발생했습니다.";
+      });
       return;
     }
   }

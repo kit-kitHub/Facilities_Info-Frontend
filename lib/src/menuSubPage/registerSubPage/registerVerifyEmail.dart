@@ -35,11 +35,15 @@ class _RegisterVerifyEmailPageState extends State<RegisterVerifyEmailPage> {
     //   if (result == "?") {
     //
     //   } else if (result == "?") {
-    //     emailError = "이메일 인증이 완료되지 않았습니다.";
+    //     setState(() {
+    //       emailError = "이메일 인증이 완료되지 않았습니다.";
+    //     });
     //     return;
     //   }
     // } catch (e) {
-    //   emailError = "이메일 인증 확인 중 에러가 발생했습니다.";
+    //   setState(() {
+    //     emailError = "이메일 인증 확인 중 에러가 발생했습니다.";
+    //   });
     //   return;
     // }
 
