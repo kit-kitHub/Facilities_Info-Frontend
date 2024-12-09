@@ -83,19 +83,19 @@ class _FacilityDetailScreenState extends State<FacilityDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 10),
-            Text('Address: ${widget.facility.address}'),
+            Text('주소: ${widget.facility.address}'),
             SizedBox(height: 10),
-            Text('Description: ${widget.facility.description}'),
+            Text('설명: ${widget.facility.description}'),
             SizedBox(height: 10),
-            Text('Rating: ${widget.facility.rating}'),
+            Text('좋아요: ${widget.facility.rating.toInt()}'),
             SizedBox(height: 10),
-            Text('Type: ${widget.facility.type.name}'),
+            Text('유형: ${widget.facility.type.koreanName}'),
             SizedBox(height: 20),
 
             // Detailed Locations
             if (widget.facility.detailedLocations.isNotEmpty) ...[
               Text(
-                '상세위치',
+                '상세 위치',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
@@ -120,9 +120,9 @@ class _FacilityDetailScreenState extends State<FacilityDetailScreen> {
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Rating: ${detailedLocation.rating}'),
-                          Text('Latitude: ${detailedLocation.latitude}'),
-                          Text('Longitude: ${detailedLocation.longitude}'),
+                          Text('좋아요: ${detailedLocation.rating.toInt()}'),
+                          Text('위도: ${detailedLocation.latitude}'),
+                          Text('경도: ${detailedLocation.longitude}'),
                         ],
                       ),
                       trailing: Row(

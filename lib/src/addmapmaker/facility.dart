@@ -41,6 +41,23 @@ enum FacilityType {
   RESTROOM,
 }
 
+extension FacilityTypeExtensionKR on FacilityType {
+  String get koreanName {
+    switch (this) {
+      case FacilityType.PARKING_LOT:
+        return "주차장";
+      case FacilityType.WELFARE_CENTER:
+        return "복지센터";
+      case FacilityType.MEDICAL_FACILITY:
+        return "의료시설";
+      case FacilityType.RESTROOM:
+        return "화장실";
+      default:
+        return "알 수 없음";
+    }
+  }
+}
+
 extension FacilityTypeExtension on FacilityType {
   static FacilityType fromName(String name) {
     switch (name) {
