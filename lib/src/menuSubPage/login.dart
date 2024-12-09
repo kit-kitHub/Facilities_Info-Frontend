@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:facilities_info/src/home.dart';
+import 'package:facilities_info/src/menu.dart';
 import 'package:facilities_info/src/menuSubPage/register.dart';
 
 import 'package:facilities_info/Controller/authController.dart';
@@ -92,7 +93,11 @@ class _LoginPageState extends State<LoginPage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: AppColors.fontSecondary), // Font Secondary Color 적용
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const MenuScreen()), // MenuScreen으로 이동
+                  (route) => false, // 이전 스택 제거
+            );
           },
         ),
       ),
