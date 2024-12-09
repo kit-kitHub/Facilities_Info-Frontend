@@ -92,7 +92,7 @@ class _InquiryScreenState extends State<InquiryScreen> {
         child: Column(
           children: [
             SizedBox(height: 32),
-            // FAQ 리스트
+// FAQ 리스트
             Expanded(
               flex: 3,
               child: Column(
@@ -104,17 +104,22 @@ class _InquiryScreenState extends State<InquiryScreen> {
                       itemCount: faqs.length,
                       itemBuilder: (context, index) {
                         final faq = faqs[index];
-                        return ListTile(
-                          title: Text(faq.title ?? ''),
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ArticleDetailsPage(
-                                id: faq.id,
-                                type: 'faq',
+                        return Column(
+                          children: [
+                            ListTile(
+                              title: Text(faq.title ?? ''),
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ArticleDetailsPage(
+                                    id: faq.id,
+                                    type: 'faq',
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                            Divider(), // 구분선 추가
+                          ],
                         );
                       },
                     ),
