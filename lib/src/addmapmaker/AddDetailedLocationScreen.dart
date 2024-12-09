@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'AddLocationFacType.dart';
 import '/SingleTone/fontSizeManager.dart';
@@ -6,6 +7,12 @@ import '/SingleTone/fontSizeManager.dart';
 class AddDetailedLocationScreen extends StatelessWidget {
   final TextEditingController _descriptionController = TextEditingController();
   final fontSizeManager = FontSizeManager();
+
+
+  Future<void> _saveData(String FacDetailadd) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('facaddress', FacDetailadd);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +78,7 @@ class AddDetailedLocationScreen extends StatelessWidget {
               child: OutlinedButton(
                 onPressed: () {
                   String detail_text = _descriptionController.text.trim();
+                  _saveData(detail_text);
                   Navigator.push(
                     context,
                     MaterialPageRoute(

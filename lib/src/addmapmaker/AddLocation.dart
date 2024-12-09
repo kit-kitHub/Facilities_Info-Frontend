@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '/SingleTone/fontSizeManager.dart';
 import '../../SingleTone/map_center.dart';
 import 'AddLocationimg.dart';
@@ -27,6 +28,13 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
         latLng: currentCenter!,
       )
     );
+  }
+
+
+  Future<void> _saveData(String lat, String lng) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('lat', lat);
+    await prefs.setString('lat', lng);
   }
 
   @override
@@ -86,6 +94,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
             width:  MediaQuery.of(context).size.width * 0.9, // 버튼이 부모의 모든 가로 영역을 차지하도록 설정
             child: OutlinedButton(
               onPressed: () {
+                _saveData(currentCenter!.latitude.toString(), currentCenter!.longitude.toString());
                 Navigator.push(
                   context,
                   MaterialPageRoute(

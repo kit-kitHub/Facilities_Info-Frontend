@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'AddLocationstar.dart';
 import '/SingleTone/fontSizeManager.dart';
@@ -13,6 +14,11 @@ class SelectFacilityTypeScreen extends StatefulWidget {
 class _SelectFacilityTypeScreenState extends State<SelectFacilityTypeScreen> {
   String? selectedType;
   final fontSizeManager = FontSizeManager();
+
+  Future<void> _saveData(String FacType) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('facType', FacType);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +94,7 @@ class _SelectFacilityTypeScreenState extends State<SelectFacilityTypeScreen> {
               height: 50,
               child: OutlinedButton(
                 onPressed: () {
+                  _saveData(selectedType!);
                   Navigator.push(
                     context,
                     MaterialPageRoute(

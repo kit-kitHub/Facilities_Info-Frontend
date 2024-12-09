@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'AddFacilityDescriptionScreen.dart';
 import '/SingleTone/fontSizeManager.dart';
@@ -13,6 +14,11 @@ class RateFacilityScreen extends StatefulWidget {
 class _RateFacilityScreenState extends State<RateFacilityScreen> {
   double rating = 0;
   final fontSizeManager = FontSizeManager();
+
+  Future<void> _saveData(String rating) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('rating', rating);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +77,7 @@ class _RateFacilityScreenState extends State<RateFacilityScreen> {
               child: OutlinedButton(
                 onPressed: rating > 0
                     ? () {
+                  _saveData(rating.toString());
                   // Navigate to next screen with rating value
                   Navigator.push(
                     context,

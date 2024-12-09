@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'Appstate.dart';
+
 import 'dart:io';
 
 import 'AddLocationfacName.dart';
@@ -21,6 +24,8 @@ class _AddFacilityScreenState extends State<AddFacilityScreen> {
     if (pickedFile != null) {
       setState(() {
         _selectedImage = File(pickedFile.path);
+        Provider.of<AppState>(context, listen: false)
+            .setSelectedImage(_selectedImage); // 이미지 설정
       });
     }
   }

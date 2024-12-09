@@ -1,7 +1,14 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
-import '../../main.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+
+import '/main.dart';
 import '/SingleTone/fontSizeManager.dart';
+import 'Appstate.dart';
+import 'facility.dart';
+import 'facility_controller.dart';
 
 
 class AddFacilityDescriptionScreen extends StatefulWidget {
@@ -12,13 +19,48 @@ class AddFacilityDescriptionScreen extends StatefulWidget {
 }
 
 class _AddFacilityDescriptionScreenState extends State<AddFacilityDescriptionScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final ApiService apiService = ApiService();
+  late Future<List<Facility>> futureFacilities;
   final TextEditingController _descriptionController = TextEditingController();
   final fontSizeManager = FontSizeManager();
+
+  Future<void> _saveData(String FacDetailadd) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('facdescrition', FacDetailadd);
+  }
 
   @override
   void dispose() {
     _descriptionController.dispose();
     super.dispose();
+  }
+
+  void _createFacility() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (_formKey.currentState!.validate()) {
+      final facilityData = {
+        'name': prefs.getString('facName'),
+        'address': prefs.getString('facaddress'),
+        'description': prefs.getString('facdescrition'),
+        'type': prefs.getString('facType'),
+        'latitude': prefs.getString('lat'),
+        'longitude': prefs.getString('lng'),
+      };
+
+
+      File? image = Provider.of<AppState>(context).selectedImage;
+
+      try {
+        await apiService.createFacility(facilityData, image as List<File>);
+        setState(() {
+          futureFacilities = apiService.searchFacilities();
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Facility created successfully')));
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to create facility')));
+      }
+    }
   }
 
   @override
@@ -79,6 +121,8 @@ class _AddFacilityDescriptionScreenState extends State<AddFacilityDescriptionScr
                 onPressed: () {
                   // Handle completion with description
                   final description = _descriptionController.text;
+                  _saveData(description);
+                  _createFacility;
                   Navigator.push(
                     context,
                     MaterialPageRoute(
