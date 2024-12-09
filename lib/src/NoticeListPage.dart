@@ -63,31 +63,20 @@ class _NoticeListPageState extends State<NoticeListPage> {
       ),
     );
   }
+
   Widget _buildArticleTile(Article article) {
-    return Column(
-      children: [
-        ListTile(
-          title: Text(
-            article.title,
-            style: TextStyle(
-              fontSize: fontSizeManager.fontSize + 2,
-              fontWeight: FontWeight.w600,
-            ),
+    return ListTile(
+      title: Text(article.title, style: TextStyle(fontSize: fontSizeManager.fontSize + 2, fontWeight: FontWeight.w600)),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => NoticeDetailPage(article: article),
           ),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => NoticeDetailPage(article: article),
-              ),
-            );
-          },
-        ),
-        Divider(), // 구분선 추가
-      ],
+        );
+      },
     );
   }
-
 }
 
 class NoticeDetailPage extends StatelessWidget {
