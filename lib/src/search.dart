@@ -128,14 +128,6 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
             ),
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.mic),
-            onPressed: () {
-              // Handle microphone action
-            },
-          ),
-        ],
         bottom: TabBar(
           controller: _tabController,
           labelColor: Colors.blue,

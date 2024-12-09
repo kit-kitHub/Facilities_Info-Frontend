@@ -12,6 +12,7 @@ class   FacilityReviewEditScreen extends StatefulWidget {
 class _FacilityReviewEditScreenState extends State<FacilityReviewEditScreen> {
   final TextEditingController _commentController = TextEditingController();
   int _selectedRating = 0; // 선택된 별점 수
+  bool _isLiked = false;
 
   void _addReview(BuildContext context, int facilityId) async {
     final reviewData = {
@@ -52,23 +53,29 @@ class _FacilityReviewEditScreenState extends State<FacilityReviewEditScreen> {
             SizedBox(height: 16),
 
             // 별점 선택 부분
-            Text('별점',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(
+              '좋아요',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
             Row(
-              children: List.generate(5, (index) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedRating = index + 1; // 별점은 1부터 시작
-                    });
-                  },
-                  child: Icon(
-                    index < _selectedRating ? Icons.star : Icons.star_border,
-                    color: Colors.amber,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    _isLiked ? Icons.thumb_up : Icons.thumb_up_off_alt,
+                    color: _isLiked ? Colors.blue : Colors.grey,
                     size: 36,
                   ),
-                );
-              }),
+                  onPressed: () {
+                    setState(() {
+                      _isLiked = !_isLiked; // 좋아요 상태 토글
+                    });
+                  },
+                ),
+                Text(
+                  _isLiked ? '좋아요를 눌렀습니다' : '좋아요를 눌러보세요',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ],
             ),
             SizedBox(height: 16),
 
@@ -76,7 +83,7 @@ class _FacilityReviewEditScreenState extends State<FacilityReviewEditScreen> {
               onPressed: () async {
                 if (_selectedRating == 0 || _commentController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('별점과 댓글을 입력해주세요.')),
+                    SnackBar(content: Text('좋아요와 댓글을 입력해주세요.')),
                   );
                   return;
                 }
