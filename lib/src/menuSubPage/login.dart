@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:facilities_info/src/home.dart';
-import 'package:facilities_info/src/menu.dart';
 import 'package:facilities_info/src/menuSubPage/register.dart';
 
 import 'package:facilities_info/Controller/authController.dart';
@@ -58,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
 
         Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => HomeScreen())
+            MaterialPageRoute(builder: (context) => const HomeScreen())
         );
 
       } else if (result == "Invalid password") {
@@ -95,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
           onPressed: () {
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => const MenuScreen()), // MenuScreen으로 이동
+              MaterialPageRoute(builder: (context) => const HomeScreen(currentIndex: 2)), // HomeScreen으로 이동
                   (route) => false, // 이전 스택 제거
             );
           },
