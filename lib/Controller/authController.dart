@@ -23,7 +23,7 @@ class AuthController {
   }
 
   static Future<String> checkNickname(String nickname) async {
-    final response = await http.get(Uri.parse('$baseUrl/checknickname/$nickname'));
+    final response = await http.get(Uri.parse('$baseUrl/checkNickname/$nickname'));
 
     if (response.statusCode == 200) {
       // 사용 가능한 닉네임

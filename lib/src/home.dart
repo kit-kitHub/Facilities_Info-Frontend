@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 
-import '/src/map.dart';
-import '/src/search.dart';
-import '/src/menu.dart';
+import 'package:facilities_info/src/map.dart';
+import 'package:facilities_info/src/search.dart';
+import 'package:facilities_info/src/menu.dart';
 
-import '/src/RecentSearchScreen.dart';
+import 'package:facilities_info/src/RecentSearchScreen.dart';
 
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final int currentIndex;
+
+  const HomeScreen({Key? key, this.currentIndex = 0}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0;
+  late int _currentIndex;
 
   final List<Widget> _screens = [
     const MapScreen() ,
@@ -28,6 +30,12 @@ class _HomeScreenState extends State<HomeScreen> {
     const BottomNavigationBarItem(label: '검색', icon: Icon(Icons.search),),
     const BottomNavigationBarItem(label: '메뉴', icon: Icon(Icons.menu),),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.currentIndex;
+  }
 
   @override
   Widget build(BuildContext context) {

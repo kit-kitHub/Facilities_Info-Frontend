@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
 
         Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => HomeScreen())
+            MaterialPageRoute(builder: (context) => const HomeScreen())
         );
 
       } else if (result == "Invalid password") {
@@ -92,7 +92,11 @@ class _LoginPageState extends State<LoginPage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: AppColors.fontSecondary), // Font Secondary Color 적용
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen(currentIndex: 2)), // HomeScreen으로 이동
+                  (route) => false, // 이전 스택 제거
+            );
           },
         ),
       ),
