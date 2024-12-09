@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../addmapmaker/detailed_location.dart';
-import '../addmapmaker/detailed_location_detail_screen.dart';
 import '../addmapmaker/facility.dart';
 import '../addmapmaker/facility_controller.dart';
 import '/review/api_controller.dart';
@@ -19,7 +18,9 @@ class _FacilityDetailScreenState extends State<FacilityDetailScreen> {
   final ApiService apiService = ApiService();
   List<Map<String, dynamic>> _reviews = [];
   final TextEditingController _reviewController = TextEditingController();
-  bool _isLiked = false;
+  Set<int> _likedLocations = {};
+  Set<int> _dislikedLocations = {};
+  Set<int> _likedReviews = {};
 
   @override
   void initState() {
@@ -38,42 +39,36 @@ class _FacilityDetailScreenState extends State<FacilityDetailScreen> {
     }
   }
 
-  Future<void> _submitReview(Map<String, dynamic> newReview) async {
-    try {
-      final response = await ApiController.addReview(newReview);
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        setState(() {
-          _reviews.add(newReview);
-          _reviewController.clear();
-        });
+  Future<void> _toggleLikeLocation(int locationId) async {
+    setState(() {
+      if (_likedLocations.contains(locationId)) {
+        _likedLocations.remove(locationId);
       } else {
-        print('Failed to add review');
+        _likedLocations.add(locationId);
+        _dislikedLocations.remove(locationId);
       }
-    } catch (e) {
-      print('Error submitting review: $e');
-    }
+    });
   }
 
-  Future<void> _toggleLike(int reviewId) async {
-    try {
-      final response = await ApiController.toggleLike(reviewId);
-      if (response.statusCode == 200) {
-        setState(() {
-          _isLiked = !_isLiked;
-        });
+  Future<void> _toggleDislikeLocation(int locationId) async {
+    setState(() {
+      if (_dislikedLocations.contains(locationId)) {
+        _dislikedLocations.remove(locationId);
+      } else {
+        _dislikedLocations.add(locationId);
+        _likedLocations.remove(locationId);
       }
-    } catch (e) {
-      print('Error toggling like: $e');
-    }
+    });
   }
 
-  void _viewDetailedLocation(DetailedLocation detailedLocation) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DetailedLocationDetailScreen(detailedLocation: detailedLocation),
-      ),
-    );
+  Future<void> _toggleLikeReview(int reviewId) async {
+    setState(() {
+      if (_likedReviews.contains(reviewId)) {
+        _likedReviews.remove(reviewId);
+      } else {
+        _likedReviews.add(reviewId);
+      }
+    });
   }
 
   @override
@@ -87,11 +82,6 @@ class _FacilityDetailScreenState extends State<FacilityDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Facility Details
-            Text(
-              widget.facility.name,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
             SizedBox(height: 10),
             Text('Address: ${widget.facility.address}'),
             SizedBox(height: 10),
@@ -103,86 +93,124 @@ class _FacilityDetailScreenState extends State<FacilityDetailScreen> {
             SizedBox(height: 20),
 
             // Detailed Locations
-            Text(
-              '상세위치',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                itemCount: widget.facility.detailedLocations.length,
-                itemBuilder: (context, index) {
-                  DetailedLocation detailedLocation = widget.facility.detailedLocations[index];
-                  return ListTile(
-                    title: Text(detailedLocation.location),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Rating: ${detailedLocation.rating}'),
-                        Text('Latitude: ${detailedLocation.latitude}'),
-                        Text('Longitude: ${detailedLocation.longitude}'),
-                      ],
-                    ),
-                    onTap: () => _viewDetailedLocation(detailedLocation),
-                  );
-                },
+            if (widget.facility.detailedLocations.isNotEmpty) ...[
+              Text(
+                '상세위치',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-            ),
-
-            SizedBox(height: 20),
+              SizedBox(height: 10),
+              ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: 250), // 최대 높이 제한
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: widget.facility.detailedLocations.length.clamp(0, 5),
+                  itemBuilder: (context, index) {
+                    DetailedLocation detailedLocation =
+                    widget.facility.detailedLocations[index];
+                    return ListTile(
+                      leading: detailedLocation.images.isNotEmpty
+                          ? Image.network(
+                        detailedLocation.images.first,
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                      )
+                          : Icon(Icons.image_not_supported), // 이미지가 없을 경우 기본 아이콘 표시
+                      title: Text(detailedLocation.location),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Rating: ${detailedLocation.rating}'),
+                          Text('Latitude: ${detailedLocation.latitude}'),
+                          Text('Longitude: ${detailedLocation.longitude}'),
+                        ],
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              _likedLocations.contains(detailedLocation.id)
+                                  ? Icons.thumb_up
+                                  : Icons.thumb_up_off_alt,
+                              color: _likedLocations.contains(detailedLocation.id)
+                                  ? Colors.blue
+                                  : Colors.grey,
+                            ),
+                            onPressed: () => _toggleLikeLocation(detailedLocation.id),
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              _dislikedLocations.contains(detailedLocation.id)
+                                  ? Icons.thumb_down
+                                  : Icons.thumb_down_off_alt,
+                              color: _dislikedLocations.contains(detailedLocation.id)
+                                  ? Colors.red
+                                  : Colors.grey,
+                            ),
+                            onPressed: () => _toggleDislikeLocation(detailedLocation.id),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: 20),
+            ],
 
             // Reviews Section
-            Text(
-              '리뷰',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            TextField(
-              controller: _reviewController,
-              readOnly: true,
-              onTap: () async {
-                final newReview = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FacilityReviewEditScreen(),
-                    settings: RouteSettings(arguments: widget.facility.id),
-                  ),
-                );
-                if (newReview != null) {
-                  _submitReview(newReview);
-                }
-              },
-              decoration: InputDecoration(
-                hintText: '리뷰 작성 또는 수정하기',
-                border: OutlineInputBorder(),
+            if (_reviews.isNotEmpty) ...[
+              Text(
+                '리뷰',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-            ),
-            Divider(),
-            Expanded(
-              child: _reviews.isEmpty
-                  ? Center(child: Text('리뷰가 없습니다.'))
-                  : ListView.builder(
-                itemCount: _reviews.length,
-                itemBuilder: (context, index) {
-                  final review = _reviews[index];
-                  return ListTile(
-                    leading: CircleAvatar(),
-                    title: Text(review['username'] ?? 'Unknown'),
-                    subtitle: Text(review['content']),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(review['date']),
-                        IconButton(
-                          icon: Icon(_isLiked ? Icons.thumb_up : Icons.thumb_up_off_alt),
-                          onPressed: () => _toggleLike(review['id']),
-                        ),
-                      ],
+              SizedBox(height: 10),
+              TextField(
+                controller: _reviewController,
+                readOnly: true,
+                onTap: () async {
+                  final newReview = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FacilityReviewEditScreen(),
+                      settings: RouteSettings(arguments: widget.facility.id),
                     ),
                   );
                 },
+                decoration: InputDecoration(
+                  hintText: '리뷰 작성 또는 수정하기',
+                  border: OutlineInputBorder(),
+                ),
               ),
-            ),
+              Divider(),
+              ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: 250), // 최대 높이 제한
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: _reviews.length.clamp(0, 5),
+                  itemBuilder: (context, index) {
+                    final review = _reviews[index];
+                    return ListTile(
+                      leading: CircleAvatar(),
+                      title: Text(review['username'] ?? 'Unknown'),
+                      subtitle: Text(review['content']),
+                      trailing: IconButton(
+                        icon: Icon(
+                          _likedReviews.contains(review['id'])
+                              ? Icons.thumb_up
+                              : Icons.thumb_up_off_alt,
+                          color: _likedReviews.contains(review['id'])
+                              ? Colors.blue
+                              : Colors.grey,
+                        ),
+                        onPressed: () => _toggleLikeReview(review['id']),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ],
         ),
       ),

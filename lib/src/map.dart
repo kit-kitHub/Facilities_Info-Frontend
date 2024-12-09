@@ -89,19 +89,19 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
   }
 
   Future<void> _restoreCurrentLevel() async {
+    if (mapController == null) return; // mapController 초기화 확인
     final prefs = await SharedPreferences.getInstance();
     currentLevel = prefs.getInt('map_level') ?? mapCenterManager().level;
     mapController.setLevel(currentLevel); // 복원된 레벨 적용
   }
 
   Future<void> _restoreLastPosition() async {
+    if (mapController == null) return; // mapController 초기화 확인
     final prefs = await SharedPreferences.getInstance();
 
-    // SharedPreferences에서 저장된 위치 불러오기
     double latitude = prefs.getDouble('last_latitude') ?? mapcentermanager.mapCenterlatitude;
     double longitude = prefs.getDouble('last_longitude') ?? mapcentermanager.mapCenterlongitude;
 
-    // 지도 중심 위치 복원
     LatLng lastPosition = LatLng(latitude, longitude);
     mapController.setCenter(lastPosition);
   }
@@ -166,7 +166,11 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                 child: KakaoMap(
                   onMapCreated: (controller) async {
                     mapController = controller;
-                    List<GeoCoordinates> positionsList = await fetchGeoCoordinates(36.1465, 128.3935, 10);
+                    // 초기화된 후에 복원 작업 수행
+                    await _restoreCurrentLevel();
+                    await _restoreLastPosition();
+
+                    List<GeoCoordinates> positionsList = await fetchGeoCoordinates(36.1465, 128.3935, 10000);
                     controller.setLevel(mapcentermanager.level);
                     for (var position in positionsList) {
                       LatLng newPosition = LatLng(position.latitude, position.longitude);
