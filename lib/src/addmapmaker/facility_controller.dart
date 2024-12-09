@@ -6,7 +6,7 @@ import 'package:http/http.dart';
 import 'facility.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://10.0.2.2:8080/api';
+  static const String baseUrl = 'http://3.34.105.70:8080/api';
 
   Future<List<Facility>> searchFacilities({String? name, FacilityType? type}) async {
     final Map<String, String> queryParameters = {};
