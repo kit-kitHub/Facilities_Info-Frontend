@@ -51,28 +51,57 @@ class _LoginPageState extends State<LoginPage> {
     try {
       final result = await AuthController.loginUser(email, password);
 
-      if (result is Map<String, String> && result['accessToken'] != null && result['refreshToken'] != null) {
-        tokenManager.setAccessToken(result['accessToken']!);
-        tokenManager.setRefreshToken(result['refreshToken']!);
+      if (result['statusCode'] == 200) {
+        final user = result['body']['user'];
+        final message = result['body']['message'];
 
-        Navigator.push(
+        if (user['isBlocked'] == true) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('차단된 사용자입니다.\n사유: ${user['block']['reason']}')),
+          );
+        } else if (user['authorities']?.contains('ROLE_ADMIN') == true) {
+          tokenManager.setAccessToken(result['body']['accessToken']);
+          tokenManager.setRefreshToken(result['body']['refreshToken']);
+
+          Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const HomeScreen())
-        );
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        } else if (result['body']['accessToken'] != null &&
+            result['body']['refreshToken'] != null) {
+          tokenManager.setAccessToken(result['body']['accessToken']);
+          tokenManager.setRefreshToken(result['body']['refreshToken']);
 
-      } else if (result == "Invalid password") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("로그인 중 알 수 없는 오류 발생"))
+          );
+        }
+      } else if (result['statusCode'] == 401 &&
+          result['body']['message'] == "Invalid password") {
         setState(() {
           passwordError = "비밀번호가 일치하지 않습니다.";
         });
-      } else if (result == "User not found") {
+      } else if (result['statusCode'] == 404 &&
+          result['body']['message'] == "User not found") {
         setState(() {
           emailError = "해당 이메일을 찾을 수 없습니다.";
         });
       } else {
-        print("로그인 중 알 수 없는 오류 발생");
+        final errorMessage = result['body']['message'] ?? "알 수 없는 오류가 발생했습니다.";
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
       }
     } catch (e) {
       print("로그인 중 오류 발생: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("로그인 시도 중 오류가 발생했습니다. 다시 시도해 주세요.")),
+      );
     }
   }
 

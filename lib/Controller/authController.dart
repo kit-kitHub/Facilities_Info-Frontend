@@ -1,11 +1,47 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'package:facilities_info/Controller/apiController.dart';
+
 import 'package:facilities_info/models/user.dart';
 
 
 class AuthController {
-  static const String baseUrl = 'http://3.34.105.70:8080/api/auth';
+  static const String baseUrl = '${ApiController.apiUrl}/auth';
+
+  // 이메일 인증 요청
+  static Future<String> requestEmailVerification(String email) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/emailVerify/$email'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      return "Verification email sent successfully";
+    } else if (response.statusCode == 500) {
+      final message = jsonDecode(response.body)['message'];
+      return message ?? "Failed to send verification email.";
+    } else {
+      throw Exception("이메일 인증 요청 중 오류 발생: ${response.statusCode}");
+    }
+  }
+
+  // 이메일 인증 확인
+  static Future<String> checkEmailVerification(String email) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/checkEmailVerify/$email'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      return "Email is verified and token deleted";
+    } else if (response.statusCode == 400) {
+      return "Email is not verified";
+    } else {
+      final message = jsonDecode(response.body)['message'];
+      return message ?? "Unexpected error occurred.";
+    }
+  }
 
   static Future<dynamic> checkEmail(String email) async {
     final response = await http.get(Uri.parse('$baseUrl/checkEmail/$email'));
@@ -68,19 +104,10 @@ class AuthController {
       body: jsonEncode({'email': email, 'password': password}),
     );
 
-    if (response.statusCode == 200) {
-      // 로그인 성공, 토큰 반환
-      return Map<String, String>.from(jsonDecode(response.body));
-    } else if (response.statusCode == 401) {
-      // 비밀번호가 일치하지 않는 경우
-      return "Invalid password";
-    } else if (response.statusCode == 404) {
-      // email 또는 snsId가 없는 경우
-      return "User not found";
-    } else {
-      // 그 외의 에러 처리
-      throw Exception("로그인 중 오류 발생: ${response.statusCode}");
-    }
+    return {
+      'statusCode': response.statusCode,
+      'body': jsonDecode(utf8.decode(response.bodyBytes))
+    };
   }
 
 

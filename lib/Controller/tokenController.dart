@@ -1,13 +1,15 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'package:facilities_info/Controller/apiController.dart';
+
 import 'package:facilities_info/SingleTone/tokenManager.dart';
 
 import 'package:facilities_info/tools/jwt_decoder.dart';
 
 
 class TokenController {
-  final String apiBaseUrl = "http://3.34.105.70:8080/api/auth"; // TODO : API 경로 맞게 설정
+  static const String baseUrl = '${ApiController.apiUrl}/auth'; // TODO : API 경로 맞게 설정
   final TokenManager tokenManager = TokenManager();
 
   /// 토큰 갱신 메서드
@@ -18,7 +20,7 @@ class TokenController {
       if (refreshToken == null) return false;
 
       final response = await http.post(
-        Uri.parse("$apiBaseUrl/token/refresh"),
+        Uri.parse("$baseUrl/token/refresh"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"RefreshToken": refreshToken}),
       );

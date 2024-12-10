@@ -23,31 +23,35 @@ class _RegisterVerifyEmailPageState extends State<RegisterVerifyEmailPage> {
 
   String? emailError; // 이메일 필드 에러 메시지
 
+
   void _onNextPressed() async {
     setState(() {
       emailError = null; // 초기화
     });
 
-    // TODO: 이메일 인증여부 확인 로직 추가
-    // try {
-    //   final result = await AuthController.checkEmail(widget.email);
-    //
-    //   if (result == "?") {
-    //
-    //   } else if (result == "?") {
-    //     setState(() {
-    //       emailError = "이메일 인증이 완료되지 않았습니다.";
-    //     });
-    //     return;
-    //   }
-    // } catch (e) {
-    //   setState(() {
-    //     emailError = "이메일 인증 확인 중 에러가 발생했습니다.";
-    //   });
-    //   return;
-    // }
+    try {
+      // 이메일 인증 여부 확인
+      final result = await AuthController.checkEmailVerification(widget.email);
 
-    _navigateToNext();
+      if (result == "Email is verified and token deleted") {
+        // 이메일 인증 완료
+        _navigateToNext();
+      } else if (result == "Email is not verified") {
+        // 이메일 인증 미완료
+        setState(() {
+          emailError = "이메일 인증이 완료되지 않았습니다.";
+        });
+        return;
+      } else {
+        setState(() {
+          emailError = "알 수 없는 오류가 발생했습니다.";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        emailError = "이메일 인증 확인 중 에러가 발생했습니다.";
+      });
+    }
   }
 
   void _navigateToNext() {
