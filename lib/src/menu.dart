@@ -7,7 +7,7 @@ import '/SingleTone/fontSizeManager.dart';
 import '/SingleTone/tokenManager.dart';
 
 import 'InquriyScreen.dart';
-import 'NoticeListPage.dart';
+import 'menuSubPage/notice.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({Key? key}) : super(key: key);

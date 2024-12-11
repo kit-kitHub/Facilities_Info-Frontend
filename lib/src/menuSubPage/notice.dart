@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import '/SingleTone/fontSizeManager.dart';
-import '/article/article.dart';
+import 'package:facilities_info/SingleTone/fontSizeManager.dart';
+
+import 'package:facilities_info/article/article.dart';
+
+import 'package:facilities_info/styles/color.dart';
 
 class NoticeListPage extends StatefulWidget {
   @override
@@ -43,7 +46,7 @@ class _NoticeListPageState extends State<NoticeListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('공지사항', style: TextStyle(fontSize: fontSizeManager.fontSize + 8)),
+        title: Text('공지사항',),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -89,7 +92,7 @@ class NoticeDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('공지사항 상세', style: TextStyle(fontSize: fontSizeManager.fontSize + 8),),
+        title: Text('공지사항 상세',),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
