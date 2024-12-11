@@ -1,37 +1,40 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+
+import '../SingleTone/tokenManager.dart';
 
 class ApiController {
   static const String baseUrl = 'http://3.34.105.70:8080';
 
-  // Method to fetch the access token dynamically from SharedPreferences
-  static Future<String?> _getAccessToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('accessToken');  // Retrieve the stored access token
-  }
-
+  // 토큰을 가져오기 위해 TokenManager를 사용
   static Future<http.Response> createReport(String contentType, int contentId, Map<String, dynamic> reportData) async {
     final url = '$baseUrl/reports/$contentType/$contentId';
-    String? accessToken = await _getAccessToken();  // Fetch the token
+
+    // TokenManager를 사용하여 액세스 토큰 가져오기
+    String? accessToken = await TokenManager().accessToken;
 
     if (accessToken == null) {
       throw Exception('Access token is not available');
     }
 
-    return await http.post(
+    final response = await http.post(
       Uri.parse(url),
       headers: {
-        "Authorization": "Bearer $accessToken",
+        "Authorization": "Bearer $accessToken", // 가져온 토큰 사용
         "Content-Type": "application/json",
       },
       body: jsonEncode(reportData),
     );
+
+    print('Response Status: ${response.statusCode}');
+    print('Response Body: ${response.body}'); // 응답 본문 출력
+    return response;
   }
 
   static Future<List<dynamic>> getReportsByUser(int userId) async {
     final url = '$baseUrl/reports/user/$userId';
-    String? accessToken = await _getAccessToken();  // Fetch the token
+
+    String? accessToken = await TokenManager().accessToken;
 
     if (accessToken == null) {
       throw Exception('Access token is not available');
@@ -53,7 +56,8 @@ class ApiController {
 
   static Future<List<dynamic>> getAllReports() async {
     final url = '$baseUrl/reports';
-    String? accessToken = await _getAccessToken();  // Fetch the token
+
+    String? accessToken = await TokenManager().accessToken;
 
     if (accessToken == null) {
       throw Exception('Access token is not available');

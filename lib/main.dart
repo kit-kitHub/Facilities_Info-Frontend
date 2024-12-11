@@ -1,4 +1,5 @@
 
+import 'package:facilities_info/report/admin_screen.dart';
 import 'package:facilities_info/src/RecentSearchScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -63,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _screens = [
     const MapScreen() ,
-    RecentSearchScreen(),
+    AdminReportScreen(),
     const MenuScreen(),
   ];
 

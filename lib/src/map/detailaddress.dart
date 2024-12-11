@@ -4,6 +4,7 @@ import '../addmapmaker/facility.dart';
 import '../addmapmaker/facility_controller.dart';
 import '/review/api_controller.dart';
 import '/review/facility_review_edit_screen.dart';
+import '/report/report_screen.dart';  // ReportScreen import 추가
 
 class FacilityDetailScreen extends StatefulWidget {
   final Facility facility;
@@ -18,9 +19,6 @@ class _FacilityDetailScreenState extends State<FacilityDetailScreen> {
   final ApiService apiService = ApiService();
   List<Map<String, dynamic>> _reviews = [];
   final TextEditingController _reviewController = TextEditingController();
-  Set<int> _likedLocations = {};
-  Set<int> _dislikedLocations = {};
-  Set<int> _likedReviews = {};
 
   @override
   void initState() {
@@ -101,46 +99,64 @@ class _FacilityDetailScreenState extends State<FacilityDetailScreen> {
             ],
 
             // Reviews Section
-            if (_reviews.isNotEmpty) ...[
-              Text(
-                '리뷰',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: _reviewController,
-                readOnly: true,
-                onTap: () async {
-                  final newReview = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => FacilityReviewEditScreen(),
-                      settings: RouteSettings(arguments: widget.facility.id),
+            Text(
+              '리뷰',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+
+            // '리뷰 추가하기' 버튼을 항상 표시
+            ElevatedButton(
+              onPressed: () async {
+                final newReview = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FacilityReviewEditScreen(),
+                    settings: RouteSettings(arguments: widget.facility.id),
+                  ),
+                );
+                if (newReview != null) {
+                  _fetchReviews();  // 리뷰 추가 후 재조회
+                }
+              },
+              child: Text('리뷰 추가하기'),
+            ),
+            SizedBox(height: 10),
+
+            // 리뷰 리스트 표시
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: 250), // 최대 높이 제한
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: _reviews.length.clamp(0, 5),
+                itemBuilder: (context, index) {
+                  final review = _reviews[index];
+                  return ListTile(
+                    leading: CircleAvatar(),
+                    title: Text(review['user']['nickname'] ?? 'Unknown'),
+                    subtitle: Text(review['reviewComment'] ?? ''),
+                    trailing: IconButton(
+                      icon: Icon(
+                        Icons.notifications_active,  // 사이렌 아이콘
+                        color: Colors.red,  // 빨간색 아이콘
+                      ),
+                      onPressed: () {
+                        // 신고하기 화면으로 이동
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ReportScreen(
+                              reviewId: review['id'],  // 리뷰 ID 전달
+                              contentType: 'review',   // 컨텐츠 타입 전달
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   );
                 },
-                decoration: InputDecoration(
-                  hintText: '리뷰 작성 또는 수정하기',
-                  border: OutlineInputBorder(),
-                ),
               ),
-              Divider(),
-              ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: 250), // 최대 높이 제한
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: _reviews.length.clamp(0, 5),
-                  itemBuilder: (context, index) {
-                    final review = _reviews[index];
-                    return ListTile(
-                      leading: CircleAvatar(),
-                      title: Text(review['user']['nickname'] ?? 'Unknown'),
-                      subtitle: Text(review['reviewComment'] ?? ''),
-                    );
-                  },
-                ),
-              ),
-            ],
+            ),
           ],
         ),
       ),

@@ -36,11 +36,12 @@ class _ReportScreenState extends State<ReportScreen> {
     }
 
     final reportData = {
-      'type': _typeController,
-      'reason': _contentController.text,
+      'type': _typeController,  // 신고 유형
+      'reason': _contentController.text,  // 신고 내용
     };
 
-    // Fetch access token before making the API call
+    print('Report Data: $reportData');  // reportData 확인
+
     String? accessToken = await _getAccessToken();
     if (accessToken == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -56,6 +57,9 @@ class _ReportScreenState extends State<ReportScreen> {
       reportData,
     );
 
+    print('Response Status: ${response.statusCode}');
+    print('Response Body: ${response.body}');  // 응답 본문 확인
+
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('신고되었습니다!',
@@ -67,7 +71,7 @@ class _ReportScreenState extends State<ReportScreen> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('오류로 인해 신고에 실패하였습니다',
+        SnackBar(content: Text('오류로 인해 신고에 실패하였습니다: ${response.body}',
             style: TextStyle(fontSize: fontSizeManager.fontSize))),
       );
     }
@@ -94,7 +98,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     DropdownButtonFormField<String>(
                       value: _typeController,
                       hint: Text('신고 유형을 선택해주세요'),
-                      items: ['신고 유형 1', '신고 유형 2', '신고 유형 3']
+                      items: ['욕설', '허위 사실 유포', '그 외']
                           .map((type) => DropdownMenuItem(
                         value: type,
                         child: Text(type),
