@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import 'api_controller.dart';
 
-class   FacilityReviewEditScreen extends StatefulWidget {
+class FacilityReviewEditScreen extends StatefulWidget {
   @override
   _FacilityReviewEditScreenState createState() =>
       _FacilityReviewEditScreenState();
@@ -12,7 +12,6 @@ class   FacilityReviewEditScreen extends StatefulWidget {
 class _FacilityReviewEditScreenState extends State<FacilityReviewEditScreen> {
   final TextEditingController _commentController = TextEditingController();
   int _selectedRating = 0; // 선택된 별점 수
-  bool _isLiked = false;
 
   void _addReview(BuildContext context, int facilityId) async {
     final reviewData = {
@@ -20,13 +19,20 @@ class _FacilityReviewEditScreenState extends State<FacilityReviewEditScreen> {
       'reviewComment': _commentController.text,
       'rating': _selectedRating,
     };
-    final response = await ApiController.addReview(reviewData);
+    try {
+      final response = await ApiController.addReview(reviewData);
 
-    if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Review added successfully')));
-      Navigator.popAndPushNamed(context, '/detail', arguments: facilityId);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to add review')));
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Review added successfully')));
+        Navigator.popAndPushNamed(context, '/detail', arguments: facilityId);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to add review: ${response.body}')));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')));
     }
   }
 
@@ -54,36 +60,35 @@ class _FacilityReviewEditScreenState extends State<FacilityReviewEditScreen> {
 
             // 별점 선택 부분
             Text(
-              '좋아요',
+              '별점 선택',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            Row(
-              children: [
-                IconButton(
-                  icon: Icon(
-                    _isLiked ? Icons.thumb_up : Icons.thumb_up_off_alt,
-                    color: _isLiked ? Colors.blue : Colors.grey,
-                    size: 36,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _isLiked = !_isLiked; // 좋아요 상태 토글
-                    });
-                  },
-                ),
-                Text(
-                  _isLiked ? '좋아요를 눌렀습니다' : '좋아요를 눌러보세요',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ],
+            SizedBox(height: 8),
+            RatingBar.builder(
+              initialRating: 0,
+              minRating: 1,
+              direction: Axis.horizontal,
+              allowHalfRating: false,
+              itemCount: 5,
+              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+              itemBuilder: (context, _) => Icon(
+                Icons.star,
+                color: Colors.amber,
+              ),
+              onRatingUpdate: (rating) {
+                setState(() {
+                  _selectedRating = rating.toInt();
+                });
+              },
             ),
+
             SizedBox(height: 16),
 
             ElevatedButton(
               onPressed: () async {
-                if (_selectedRating == 0 || _commentController.text.isEmpty) {
+                if (_commentController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('좋아요와 댓글을 입력해주세요.')),
+                    SnackBar(content: Text('별점과 댓글을 입력해주세요.')),
                   );
                   return;
                 }

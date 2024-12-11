@@ -39,38 +39,6 @@ class _FacilityDetailScreenState extends State<FacilityDetailScreen> {
     }
   }
 
-  Future<void> _toggleLikeLocation(int locationId) async {
-    setState(() {
-      if (_likedLocations.contains(locationId)) {
-        _likedLocations.remove(locationId);
-      } else {
-        _likedLocations.add(locationId);
-        _dislikedLocations.remove(locationId);
-      }
-    });
-  }
-
-  Future<void> _toggleDislikeLocation(int locationId) async {
-    setState(() {
-      if (_dislikedLocations.contains(locationId)) {
-        _dislikedLocations.remove(locationId);
-      } else {
-        _dislikedLocations.add(locationId);
-        _likedLocations.remove(locationId);
-      }
-    });
-  }
-
-  Future<void> _toggleLikeReview(int reviewId) async {
-    setState(() {
-      if (_likedReviews.contains(reviewId)) {
-        _likedReviews.remove(reviewId);
-      } else {
-        _likedReviews.add(reviewId);
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,33 +93,6 @@ class _FacilityDetailScreenState extends State<FacilityDetailScreen> {
                           Text('경도: ${detailedLocation.longitude}'),
                         ],
                       ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                              _likedLocations.contains(detailedLocation.id)
-                                  ? Icons.thumb_up
-                                  : Icons.thumb_up_off_alt,
-                              color: _likedLocations.contains(detailedLocation.id)
-                                  ? Colors.blue
-                                  : Colors.grey,
-                            ),
-                            onPressed: () => _toggleLikeLocation(detailedLocation.id),
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              _dislikedLocations.contains(detailedLocation.id)
-                                  ? Icons.thumb_down
-                                  : Icons.thumb_down_off_alt,
-                              color: _dislikedLocations.contains(detailedLocation.id)
-                                  ? Colors.red
-                                  : Colors.grey,
-                            ),
-                            onPressed: () => _toggleDislikeLocation(detailedLocation.id),
-                          ),
-                        ],
-                      ),
                     );
                   },
                 ),
@@ -193,19 +134,8 @@ class _FacilityDetailScreenState extends State<FacilityDetailScreen> {
                     final review = _reviews[index];
                     return ListTile(
                       leading: CircleAvatar(),
-                      title: Text(review['username'] ?? 'Unknown'),
-                      subtitle: Text(review['content']),
-                      trailing: IconButton(
-                        icon: Icon(
-                          _likedReviews.contains(review['id'])
-                              ? Icons.thumb_up
-                              : Icons.thumb_up_off_alt,
-                          color: _likedReviews.contains(review['id'])
-                              ? Colors.blue
-                              : Colors.grey,
-                        ),
-                        onPressed: () => _toggleLikeReview(review['id']),
-                      ),
+                      title: Text(review['user']['nickname'] ?? 'Unknown'),
+                      subtitle: Text(review['reviewComment'] ?? ''),
                     );
                   },
                 ),
