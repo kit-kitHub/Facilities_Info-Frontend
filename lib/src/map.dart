@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:facilities_info/styles/color.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
@@ -276,7 +277,7 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                       },
                       child: Icon(
                         Icons.my_location,
-                        color: isTracking ? Colors.blue : Colors.black87, // 상태에 따라 색상 변경
+                        color: isTracking ? AppColors.mainColor : AppColors.fontPrimary, // 상태에 따라 색상 변경
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -292,7 +293,7 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                         mapController.setLevel(currentLevel);
                         _saveCurrentLevel(); // 변경된 레벨 저장
                       },
-                      child: const Icon(Icons.add),
+                      child: const Icon(Icons.add, color: AppColors.fontPrimary),
                     ),
                     const SizedBox(height: 20),
                     FloatingActionButton(
@@ -308,7 +309,7 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                         mapController.setLevel(currentLevel);
                         _saveCurrentLevel(); // 변경된 레벨 저장
                       },
-                      child: const Icon(Icons.remove),
+                      child: const Icon(Icons.remove, color: AppColors.fontPrimary),
                     ),
                   ],
                 ),
