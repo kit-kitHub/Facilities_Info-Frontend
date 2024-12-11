@@ -10,8 +10,8 @@ class mapCenterManager {
   // 팩토리 생성자
   factory mapCenterManager() => _instance;
 
-  static const double _defaultmapCenterlatitude = 37.3608681;
-  static const double _defaultmapCenterlongitude = 126.9306506;
+  static const double _defaultmapCenterlatitude = 36.14588602056794;
+  static const double _defaultmapCenterlongitude = 128.39357690741835;
   static const int _defaultLevel = 4;  // 기본 레벨 값
 
   // SharedPreferences 인스턴스

@@ -1,16 +1,19 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:facilities_info/src/search.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Controller/geo_coordinates_service.dart';
-import 'addmapmaker/AddLocation.dart';
+import 'package:facilities_info/src/search.dart';
+import 'package:facilities_info/src/mapSubPage/addFacility.dart';
+
+import 'package:facilities_info/Controller/geo_coordinates_service.dart';
+
 import 'map/makerInfo.dart'; //마커 누르면 정보 보여주는 화면
 import 'map/Locations.dart'; //주위 정보 받아오기
-import '/SingleTone/map_center.dart';//화면 이동해도 화면 남아있게 하기위해 사용하는 싱글톤
+
+import 'package:facilities_info/SingleTone/map_center.dart';//화면 이동해도 화면 남아있게 하기위해 사용하는 싱글톤
 
 
 class MapScreen extends StatefulWidget {
@@ -326,7 +329,7 @@ class _MainScreenState extends State<MapScreen> with WidgetsBindingObserver{
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => AddLocationScreen(),
+                              builder: (context) => AddFacilityPage(),
                             ),
                           );
                         },

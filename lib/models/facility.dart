@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-
 class Facility {
   final int id;
   final String name;
@@ -31,23 +28,4 @@ class Facility {
       type: json['type'] ?? 'Unknown',             // Null 방지
     );
   }
-}
-
-Future<List<Facility>> searchFacilities({String? name, String? type}) async {
-  final queryParameters = {
-    if (name != null) 'name': name,
-    if (type != null) 'type': type,
-  };
-
-  final uri = Uri.http('3.34.105.70:8080', 'api/facilities/search', queryParameters);
-
-  final response = await http.get(uri, headers: {'Content-Type': 'application/json; charset=UTF-8'});
-
-  if (response.statusCode == 200) {
-    List<dynamic> body = json.decode(utf8.decode(response.bodyBytes));
-    return body.map((dynamic item) => Facility.fromJson(item)).toList();
-  } else {
-    throw Exception('Failed to load facilities');
-  }
-
 }
