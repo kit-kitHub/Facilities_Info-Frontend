@@ -12,7 +12,7 @@ class AuthController {
   // 이메일 인증 요청
   static Future<String> requestEmailVerification(String email) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/api/emailVerify/$email'),
+      Uri.parse('${ApiController.apiUrl}/emailVerify/$email'),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -21,15 +21,17 @@ class AuthController {
     } else if (response.statusCode == 500) {
       final message = jsonDecode(response.body)['message'];
       return message ?? "Failed to send verification email.";
-    } else {
-      throw Exception("이메일 인증 요청 중 오류 발생: ${response.statusCode}");
+    }
+    else {
+      return "";
+      // throw Exception("이메일 인증 요청 중 오류 발생: ${response.statusCode}");
     }
   }
 
   // 이메일 인증 확인
   static Future<String> checkEmailVerification(String email) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/api/checkEmailVerify/$email'),
+      Uri.parse('${ApiController.apiUrl}/checkEmailVerify/$email'),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -104,11 +106,21 @@ class AuthController {
       body: jsonEncode({'email': email, 'password': password}),
     );
 
-    return {
-      'statusCode': response.statusCode,
-      'body': jsonDecode(utf8.decode(response.bodyBytes))
-    };
+    if (response.statusCode == 200) {
+      // 로그인 성공, 토큰 반환
+      return Map<String, String>.from(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      // 비밀번호가 일치하지 않는 경우
+      return "Invalid password";
+    } else if (response.statusCode == 404) {
+      // email 또는 snsId가 없는 경우
+      return "User not found";
+    } else {
+      // 그 외의 에러 처리
+      throw Exception("로그인 중 오류 발생: ${response.statusCode}");
+    }
   }
+
 
 
   static Future<String> logoutUser(String accessToken) async {
