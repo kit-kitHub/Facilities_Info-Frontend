@@ -59,12 +59,21 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
   }
-  
-  void _sendVerificationEmail(String email) {
-    // TODO : 인증 메일 발송 로직 추가
-    
-    
+
+  void _sendVerificationEmail(String email) async {
+    try {
+      // 이메일 인증 요청
+      String result = await AuthController.requestEmailVerification(email);
+
+      // _navigateToNext(email);
+    } catch (e) {
+      // print("인증 메일 발송 오류: $e");
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text("알 수 없는 오류가 발생하였습니다.")),
+      // );
+    }
     _navigateToNext(email);
+
   }
 
   void _navigateToNext(String email) {

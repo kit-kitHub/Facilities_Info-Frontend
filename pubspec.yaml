@@ -45,6 +45,7 @@ dependencies:
   http: ^0.13.3
 
   image_picker: ^0.8.4+7
+  image: ^3.0.1
 
   # 디바이스 정보를 얻어오기 위한 패키지
   device_info_plus: ^10.0.0

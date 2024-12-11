@@ -68,7 +68,12 @@ class _LoginPageState extends State<LoginPage> {
         setState(() {
           emailError = "해당 이메일을 찾을 수 없습니다.";
         });
-      } else {
+      } else if (result == "Blocked User") {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('차단된 사용자입니다.'))
+        );
+      }
+      else {
         print("로그인 중 알 수 없는 오류 발생");
       }
     } catch (e) {
